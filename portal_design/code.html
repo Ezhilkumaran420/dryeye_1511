@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dry Eye Detection System</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            deepNavy: '#0A1628',
+            deepTeal: '#00B4D8',
+            accentCyan: '#48CAE4',
+            softWhite: '#F0F4F8',
+            warningOrange: '#FF6B35',
+            glassBg: 'rgba(10, 22, 40, 0.75)',
+            glassBorder: 'rgba(72, 202, 228, 0.25)',
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 25px -3px rgba(72, 202, 244, 0.45)',
+            'glow-teal': '0 0 30px -4px rgba(0, 180, 216, 0.55)',
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float-slow': 'float 6s ease-in-out infinite',
+            'spin-slow': 'spin 3s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-10px) rotate(2deg)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom styles and smooth animations */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0A1628;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .glass-panel {
+      background: rgba(13, 27, 49, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(72, 202, 228, 0.22);
+      box-shadow: 0 12px 40px 0 rgba(2, 8, 20, 0.6);
+    }
+
+    .glass-inner {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .slide-step {
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step-hidden {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+
+    .step-active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(72, 202, 228, 0.6) 0%, rgba(0, 180, 216, 0.1) 70%, transparent 100%);
+      animation: rise 12s infinite linear;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0.6);
+        opacity: 0;
+      }
+      20% { opacity: 0.7; }
+      80% { opacity: 0.5; }
+      100% {
+        transform: translateY(-20vh) translateX(25px) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    /* Custom Radio Option Styles */
+    .option-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-card:hover {
+      border-color: rgba(72, 202, 228, 0.6);
+      background: rgba(0, 180, 216, 0.12);
+      transform: translateY(-2px);
+    }
+    .option-card.selected {
+      border-color: #48CAE4;
+      background: rgba(0, 180, 216, 0.22);
+      box-shadow: 0 0 16px -2px rgba(72, 202, 228, 0.4);
+    }
+
+    /* Drag & Drop Glow */
+    .drop-zone.dragover {
+      border-color: #48CAE4;
+      background: rgba(0, 180, 216, 0.15);
+      transform: scale(1.01);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen text-slate-100 flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+<!-- Background Theme: Blurred Iris Stock Image + Soft Dark Blue to Teal Gradient Overlay -->
+<div class="fixed inset-0 -z-20 overflow-hidden">
+<img alt="Eye Iris Background" class="w-full h-full object-cover object-center filter blur-[10px] scale-110 opacity-35 brightness-75 contrast-125" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<!-- Deep Blue + Teal Medical Gradient Veil -->
+<div class="fixed inset-0 -z-10 bg-gradient-to-br from-[#0A1628]/95 via-[#061e38]/90 to-[#032e49]/85"></div>
+<!-- Subtle Radial Glow Center -->
+<div class="fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] md:w-[650px] h-[340px] md:h-[650px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- Ambient Floating Droplet Particles -->
+<div class="fixed inset-0 pointer-events-none -z-5 overflow-hidden" id="particles-container">
+<div class="particle" style="width: 14px; height: 14px; left: 12%; animation-duration: 14s; animation-delay: 0s;"></div>
+<div class="particle" style="width: 22px; height: 22px; left: 28%; animation-duration: 18s; animation-delay: 2s;"></div>
+<div class="particle" style="width: 10px; height: 10px; left: 55%; animation-duration: 11s; animation-delay: 1.5s;"></div>
+<div class="particle" style="width: 18px; height: 18px; left: 75%; animation-duration: 16s; animation-delay: 4s;"></div>
+<div class="particle" style="width: 12px; height: 12px; left: 88%; animation-duration: 13s; animation-delay: 3s;"></div>
+</div>
+<!-- Top Brand Navigation -->
+<header class="w-full max-w-md mx-auto pt-6 px-4 flex items-center justify-between z-20">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center shadow-lg shadow-teal-500/30 border border-teal-300/40">
+<!-- Medical Eye Icon -->
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h1 class="font-display font-semibold text-base tracking-tight text-white flex items-center gap-1.5">
+          OcuCheck <span class="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-400/30">AI</span>
+</h1>
+<p class="text-[11px] text-slate-400 font-medium">Dry Eye Detection System</p>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs font-medium text-teal-300/90 bg-teal-950/40 px-3 py-1.5 rounded-full border border-teal-500/20 backdrop-blur-md">
+<span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
+<span>Clinic Grade</span>
+</div>
+</header>
+<!-- Main Multi-Step Wizard Container -->
+<main class="w-full max-w-md mx-auto px-4 py-6 flex-grow flex flex-col justify-center z-10">
+<!-- Progress Indicator Bar (Visible on Steps 1 to 7) -->
+<div class="hidden mb-4 transition-all duration-300" id="progress-container">
+<div class="flex items-center justify-between text-xs text-slate-300 mb-2 font-medium">
+<span class="text-teal-300 uppercase tracking-wider text-[10px] font-bold bg-teal-500/10 px-2 py-0.5 rounded border border-teal-400/20" id="step-category-badge">
+          Symptom Survey
+        </span>
+<span class="font-mono text-cyan-300" id="step-number-indicator">1 / 6</span>
+</div>
+<div class="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden p-0.5 border border-slate-700/60 shadow-inner">
+<div class="h-full bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full transition-all duration-300 ease-out shadow-sm shadow-cyan-400/50" id="progress-bar-fill" style="width: 16.6%;"></div>
+</div>
+</div>
+<!-- Central Glassmorphism Card Frame -->
+<div class="glass-panel rounded-3xl p-6 sm:p-7 relative overflow-hidden transition-all duration-300">
+<!-- Top Decorative Corner Light -->
+<div class="absolute -top-12 -right-12 w-28 h-28 bg-teal-400/20 rounded-full blur-2xl pointer-events-none"></div>
+<!-- ================= STEP 0: WELCOME / LANDING SCREEN ================= -->
+<div class="slide-step step-active text-center py-2" id="step-0">
+<!-- Animated Eye / Iris Graphic Illustration -->
+<div class="relative w-28 h-28 mx-auto mb-6 flex items-center justify-center animate-float-slow">
+<div class="absolute inset-0 rounded-full bg-gradient-to-tr from-teal-500/30 to-cyan-300/20 blur-md animate-pulse"></div>
+<div class="relative w-24 h-24 rounded-full bg-gradient-to-b from-[#0A2540] to-[#041728] border-2 border-teal-400/50 shadow-glow-cyan flex items-center justify-center overflow-hidden">
+<!-- Iris concentric details -->
+<div class="w-16 h-16 rounded-full border-2 border-cyan-400/30 flex items-center justify-center bg-teal-900/30">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center shadow-inner">
+<div class="w-4 h-4 rounded-full bg-[#050e1a] border border-white/60 relative">
+<!-- Pupil light reflection -->
+<div class="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Moisture ripple effect -->
+<div class="absolute bottom-1 w-12 h-1 bg-cyan-300/40 rounded-full filter blur-[1px]"></div>
+</div>
+</div>
+<span class="inline-block px-3 py-1 mb-3 text-xs font-semibold uppercase tracking-wider text-teal-300 bg-teal-500/10 rounded-full border border-teal-400/30">
+          Digital Ocular Assessment
+        </span>
+<h2 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight leading-snug mb-3">
+          Dry Eye Detection System
+        </h2>
+<p class="text-sm text-slate-300/90 leading-relaxed mb-6 font-normal">
+          Answer 6 quick clinical questions and upload a close-up eye photo to evaluate your dry eye risk and tear-film stability.
+        </p>
+<!-- Feature pills -->
+<div class="grid grid-cols-2 gap-2 mb-7 text-left text-xs text-slate-300">
+<div class="glass-inner rounded-xl p-2.5 flex items-center gap-2">
+<span class="text-teal-400 text-sm">📋</span>
+<span>Validated OSDI index</span>
+</div>
+<div class="glass-inner rounded-xl p-2.5 flex items-center gap-2">
+<span class="text-cyan-400 text-sm">🔍</span>
+<span>Iris photo preview</span>
+</div>
+</div>
+<!-- Glowing Start Button -->
+<button class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-slate-950 font-display font-semibold text-base tracking-wide shadow-glow-teal hover:shadow-cyan-400/70 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer" id="btn-start" onclick="goToStep(1)">
+<span>Start Assessment</span>
+<svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+</div>
+<!-- ================= STEPS 1 TO 6: SYMPTOM QUESTIONNAIRE ================= -->
+<div class="slide-step step-hidden" id="questionnaire-view">
+<div class="mb-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-[11px] font-bold uppercase tracking-wider text-teal-300 bg-teal-500/20 px-2 py-0.5 rounded border border-teal-400/30" id="question-tag">
+              Question 1
+            </span>
+</div>
+<h3 class="text-lg sm:text-xl font-display font-semibold text-white leading-snug min-h-[58px]" id="question-text">
+            How often do your eyes feel dry, gritty, or sandy?
+          </h3>
+</div>
+<!-- 4 Likert Scale Radio Options -->
+<div class="space-y-2.5 mb-6" id="options-group">
+<!-- Option A -->
+<label class="option-card flex items-center justify-between p-3.5 rounded-2xl glass-inner cursor-pointer border border-white/10" onclick="selectOption(0)">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-white/10 text-slate-200 flex items-center justify-center text-xs font-bold font-mono">A</span>
+<span class="text-sm font-medium text-slate-200">Never</span>
+</div>
+<div class="radio-circle w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+<div class="radio-dot w-2.5 h-2.5 rounded-full bg-cyan-400 hidden"></div>
+</div>
+</label>
+<!-- Option B -->
+<label class="option-card flex items-center justify-between p-3.5 rounded-2xl glass-inner cursor-pointer border border-white/10" onclick="selectOption(1)">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-white/10 text-slate-200 flex items-center justify-center text-xs font-bold font-mono">B</span>
+<span class="text-sm font-medium text-slate-200">Occasionally</span>
+</div>
+<div class="radio-circle w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+<div class="radio-dot w-2.5 h-2.5 rounded-full bg-cyan-400 hidden"></div>
+</div>
+</label>
+<!-- Option C -->
+<label class="option-card flex items-center justify-between p-3.5 rounded-2xl glass-inner cursor-pointer border border-white/10" onclick="selectOption(2)">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-white/10 text-slate-200 flex items-center justify-center text-xs font-bold font-mono">C</span>
+<span class="text-sm font-medium text-slate-200">Frequently</span>
+</div>
+<div class="radio-circle w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+<div class="radio-dot w-2.5 h-2.5 rounded-full bg-cyan-400 hidden"></div>
+</div>
+</label>
+<!-- Option D -->
+<label class="option-card flex items-center justify-between p-3.5 rounded-2xl glass-inner cursor-pointer border border-white/10" onclick="selectOption(3)">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-white/10 text-slate-200 flex items-center justify-center text-xs font-bold font-mono">D</span>
+<span class="text-sm font-medium text-slate-200">Always</span>
+</div>
+<div class="radio-circle w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+<div class="radio-dot w-2.5 h-2.5 rounded-full bg-cyan-400 hidden"></div>
+</div>
+</label>
+</div>
+<!-- Validation Error Message -->
+<p class="text-xs text-rose-400 mb-3 hidden flex items-center gap-1.5 font-medium" id="survey-error">
+<svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path>
+</svg>
+          Please select an option before moving to the next question.
+        </p>
+<!-- Navigation Buttons -->
+<div class="flex items-center justify-between gap-3 pt-2">
+<button class="py-3 px-5 rounded-xl border border-slate-700 bg-slate-900/60 text-slate-300 font-medium text-sm hover:bg-slate-800 hover:text-white transition cursor-pointer flex items-center gap-1.5" onclick="handleBackStep()" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Back</span>
+</button>
+<button class="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-950 font-display font-semibold text-sm shadow-glow-cyan hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-1.5" onclick="handleNextStep()" type="button">
+<span id="next-btn-text">Next Question</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- ================= STEP 7: IMAGE UPLOAD SCREEN ================= -->
+<div class="slide-step step-hidden" id="step-7">
+<div class="text-center mb-4">
+<span class="text-[10px] font-bold uppercase tracking-wider text-teal-300 bg-teal-500/20 px-2 py-0.5 rounded border border-teal-400/30 inline-block mb-2">
+            Step 7 of 7 • Ocular Scan
+          </span>
+<h3 class="text-xl font-display font-bold text-white mb-1.5">
+            Upload an Eye Image
+          </h3>
+<p class="text-xs text-slate-300/80">
+            Please upload a clear, close-up photo of your eye for AI analysis.
+          </p>
+</div>
+<!-- Drag & Drop Upload Zone -->
+<div class="drop-zone relative rounded-2xl border-2 border-dashed border-teal-400/40 bg-slate-900/40 hover:bg-slate-900/70 p-5 text-center transition-all duration-200 cursor-pointer mb-3" id="drop-zone" onclick="document.getElementById('eye-file-input').click()">
+<input accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="hidden" id="eye-file-input" onchange="handleFileSelect(event)" type="file"/>
+<!-- Default State (No image selected yet) -->
+<div class="py-3" id="upload-prompt">
+<div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-teal-500/10 border border-teal-400/30 flex items-center justify-center text-teal-300">
+<svg class="w-7 h-7" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<p class="text-sm font-medium text-slate-200 mb-1">
+              Drag &amp; drop or <span class="text-cyan-400 underline decoration-cyan-400/50">browse photo</span>
+</p>
+<p class="text-[11px] text-slate-400">Supports .jpg, .jpeg, .png (Max 10MB)</p>
+</div>
+<!-- Uploaded Preview State -->
+<div class="hidden flex-col items-center" id="upload-preview-container">
+<div class="relative w-full h-36 rounded-xl overflow-hidden border border-teal-400/50 shadow-md mb-2 bg-slate-950">
+<img alt="Uploaded eye preview" class="w-full h-full object-cover object-center" id="image-preview" src=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
+<span class="text-xs text-slate-200 truncate font-mono" id="preview-file-name">eye_scan.jpg</span>
+</div>
+</div>
+<button class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 py-1 px-2 rounded hover:bg-rose-500/10 transition" onclick="removeUploadedImage(event)" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Change / Remove photo</span>
+</button>
+</div>
+</div>
+<!-- Sample Quick Reference / Mock helper -->
+<div class="flex items-center justify-between mb-4 px-1">
+<span class="text-[11px] text-slate-400">Need a test image?</span>
+<button class="text-[11px] text-teal-300 hover:text-cyan-200 underline cursor-pointer" onclick="useSampleImage(event)" type="button">
+            Use clinical sample image
+          </button>
+</div>
+<!-- Upload Validation Error -->
+<p class="text-xs text-rose-400 mb-3 hidden flex items-center gap-1.5 font-medium" id="upload-error">
+<svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path>
+</svg>
+<span id="upload-error-text">Please upload a valid eye image (.jpg or .png).</span>
+</p>
+<!-- Security Privacy Guarantee -->
+<div class="glass-inner rounded-xl p-2.5 mb-5 flex items-center gap-2 text-slate-400 text-[11px]">
+<span class="text-sm">🔒</span>
+<span>Your image is processed securely and not stored on public servers.</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-between gap-3">
+<button class="py-3 px-5 rounded-xl border border-slate-700 bg-slate-900/60 text-slate-300 font-medium text-sm hover:bg-slate-800 transition cursor-pointer" onclick="goToStep(7)" type="button">
+            Back
+          </button>
+<button class="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-slate-950 font-display font-semibold text-sm shadow-glow-teal hover:shadow-cyan-400/80 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2" id="btn-submit-analysis" onclick="submitForAnalysis()" type="button">
+<span>Submit for Analysis</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- ================= STEP 8: LOADING & RESULTS SCREEN ================= -->
+<div class="slide-step step-hidden" id="step-8">
+<!-- 8.A: Loading View (3 seconds simulation) -->
+<div class="py-10 text-center flex flex-col items-center justify-center" id="loading-state">
+<div class="relative w-20 h-20 mb-6">
+<!-- Animated Spinner Rings -->
+<div class="w-20 h-20 rounded-full border-4 border-slate-800 border-t-cyan-400 border-r-teal-400 animate-spin"></div>
+<!-- Center Eye Pulse -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-8 h-8 rounded-full bg-cyan-400/20 border border-cyan-400/40 flex items-center justify-center animate-ping"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<svg class="w-6 h-6 text-teal-300" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<h4 class="text-lg font-display font-semibold text-white mb-2">Analyzing your eye health...</h4>
+<p class="text-xs text-slate-300/80 max-w-xs leading-relaxed" id="loading-subtext">
+            Correlating questionnaire responses with corneal tear surface markers...
+          </p>
+<!-- Processing timeline indicators -->
+<div class="mt-6 flex items-center gap-1.5 text-[10px] text-teal-300 font-mono">
+<span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+<span>OSDI algorithm v3.4 active</span>
+</div>
+</div>
+<!-- 8.B: Final Results View -->
+<div class="hidden text-center py-2" id="results-state">
+<!-- Badge Icon Based on Risk -->
+<div class="w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-lg" id="risk-badge-icon">
+<!-- Icon rendered dynamically -->
+</div>
+<!-- Risk Category Badge -->
+<div class="mb-3">
+<span class="inline-block px-3.5 py-1 rounded-full text-xs font-bold tracking-wide border uppercase" id="risk-badge-label">
+              Normal Eyes
+            </span>
+</div>
+<!-- Score Display (out of 18 / 24) -->
+<div class="glass-inner rounded-2xl p-4 mb-4 border border-white/10">
+<p class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold mb-1">
+              Symptom Severity Score
+            </p>
+<div class="flex items-baseline justify-center gap-1.5">
+<span class="text-4xl font-display font-extrabold text-white" id="score-display-number">0</span>
+<span class="text-slate-400 text-sm font-semibold">/ 18</span>
+</div>
+<div class="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-emerald-400 rounded-full transition-all duration-700" id="score-meter" style="width: 0%;"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+<span>0 (Low)</span>
+<span>7 (Mild)</span>
+<span>13+ (High Risk)</span>
+</div>
+</div>
+<!-- Diagnostic Explanation Note -->
+<div class="glass-inner rounded-2xl p-3.5 mb-5 text-left border border-white/10">
+<div class="flex items-start gap-2.5">
+<span class="text-base text-cyan-400 flex-shrink-0 mt-0.5">ℹ️</span>
+<div class="text-xs text-slate-300 leading-relaxed">
+<p class="font-medium text-slate-100 mb-1" id="analysis-summary-text">
+                  Image analysis complete.
+                </p>
+<p class="text-slate-400">
+                  Please consult a qualified ophthalmologist or optometrist for a formal slit-lamp exam and clinical diagnosis.
+                </p>
+</div>
+</div>
+</div>
+<!-- Uploaded Eye Thumbnail Summary -->
+<div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/50 border border-slate-700/60 text-left mb-6">
+<img alt="Analyzed Eye" class="w-12 h-12 rounded-lg object-cover border border-cyan-400/30 flex-shrink-0" id="summary-eye-thumbnail" src=""/>
+<div class="text-xs overflow-hidden">
+<div class="flex items-center gap-1 text-teal-300 font-semibold">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+<span>Image Scan Verified</span>
+</div>
+<p class="text-[11px] text-slate-400 truncate" id="summary-file-label">Eye photograph processed</p>
+</div>
+</div>
+<!-- Restart Button -->
+<button class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-slate-950 font-display font-semibold text-sm shadow-glow-teal hover:shadow-cyan-400/80 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2" onclick="restartAssessment()" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Restart Assessment</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Clean Trustworthy Medical Footer -->
+<footer class="w-full max-w-md mx-auto py-4 px-4 text-center z-20">
+<p class="text-[11px] text-slate-400 font-normal">
+      © 2025 Dry Eye Detector | For educational and screening purposes only.
+    </p>
+</footer>
+<!-- ================= LOGIC & SCRIPT ================= -->
+<script>
+    // Clinical Questionnaire Data (The 7 clinical questions with laterality)
+    const questions = [
+      {
+        id: 1,
+        text: "How often have you experienced gritty, painful, or sore eyes?",
+        category: "1. OCULAR DISCOMFORT",
+        type: "frequency"
+      },
+      {
+        id: 2,
+        text: "How often have you experienced sensitivity to light?",
+        category: "2. VISUAL SENSITIVITY",
+        type: "frequency"
+      },
+      {
+        id: 3,
+        text: "How often have your eyes felt uncomfortable in windy conditions or in places with low humidity?",
+        category: "3. ENVIRONMENTAL TRIGGERS",
+        type: "frequency"
+      },
+      {
+        id: 4,
+        text: "How often have your eyes felt uncomfortable in air-conditioned environments?",
+        category: "4. ENVIRONMENTAL EXPOSURE",
+        type: "frequency"
+      },
+      {
+        id: 5,
+        text: "How often have your eyes felt uncomfortable while watching television, using a computer, or reading?",
+        category: "5. VISUAL & DIGITAL ACTIVITIES",
+        type: "frequency"
+      },
+      {
+        id: 6,
+        text: "How often have you experienced uncomfortable vision while driving at night?",
+        category: "6. NIGHT-TIME VISUAL DISCOMFORT",
+        type: "frequency"
+      },
+      {
+        id: 7,
+        text: "Which eye(s) do you experience these symptoms in?",
+        category: "7. SYMPTOM LATERALITY",
+        type: "laterality"
+      }
+    ];
+
+    const lateralityOptions = [
+      { letter: 'A', text: 'Right eye only', val: 0, label: 'Right eye only' },
+      { letter: 'B', text: 'Left eye only', val: 1, label: 'Left eye only' },
+      { letter: 'C', text: 'Both eyes', val: 2, label: 'Both eyes' }
+    ];
+
+    // State Variables
+    let currentStep = 0; // 0 = Welcome, 1-7 = Questions, 8 = Upload, 9 = Results
+    let userAnswers = {}; // Map of question index -> score or selection
+    let uploadedImageDataUrl = null;
+    let uploadedFileName = "";
+
+    // DOM Elements
+    const progressContainer = document.getElementById('progress-container');
+    const stepCategoryBadge = document.getElementById('step-category-badge');
+    const stepNumberIndicator = document.getElementById('step-number-indicator');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+
+    const step0 = document.getElementById('step-0');
+    const questionnaireView = document.getElementById('questionnaire-view');
+    const step7 = document.getElementById('step-7');
+    const step8 = document.getElementById('step-8');
+
+    const questionTag = document.getElementById('question-tag');
+    const questionText = document.getElementById('question-text');
+    const surveyError = document.getElementById('survey-error');
+    const nextBtnText = document.getElementById('next-btn-text');
+
+    const dropZone = document.getElementById('drop-zone');
+    const eyeFileInput = document.getElementById('eye-file-input');
+    const uploadPrompt = document.getElementById('upload-prompt');
+    const uploadPreviewContainer = document.getElementById('upload-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const previewFileName = document.getElementById('preview-file-name');
+    const uploadError = document.getElementById('upload-error');
+    const uploadErrorText = document.getElementById('upload-error-text');
+
+    const loadingState = document.getElementById('loading-state');
+    const resultsState = document.getElementById('results-state');
+    const loadingSubtext = document.getElementById('loading-subtext');
+
+    // Step Navigation Controller
+    function goToStep(step) {
+      // Hide all main containers
+      step0.classList.add('step-hidden');
+      step0.classList.remove('step-active');
+      questionnaireView.classList.add('step-hidden');
+      questionnaireView.classList.remove('step-active');
+      step7.classList.add('step-hidden');
+      step7.classList.remove('step-active');
+      step8.classList.add('step-hidden');
+      step8.classList.remove('step-active');
+
+      currentStep = step;
+
+      if (step === 0) {
+        progressContainer.classList.add('hidden');
+        step0.classList.remove('step-hidden');
+        step0.classList.add('step-active');
+      } else if (step >= 1 && step <= 7) {
+        progressContainer.classList.remove('hidden');
+        questionnaireView.classList.remove('step-hidden');
+        questionnaireView.classList.add('step-active');
+        renderQuestion(step);
+      } else if (step === 8) {
+        progressContainer.classList.remove('hidden');
+        stepCategoryBadge.textContent = "Image Verification";
+        stepNumberIndicator.textContent = "8 / 8";
+        progressBarFill.style.width = "100%";
+        step7.classList.remove('step-hidden');
+        step7.classList.add('step-active');
+        uploadError.classList.add('hidden');
+      } else if (step === 9) {
+        progressContainer.classList.add('hidden');
+        step8.classList.remove('step-hidden');
+        step8.classList.add('step-active');
+        startAnalysisSimulation();
+      }
+
+      // Smooth scroll back to top of container on step change
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render Question dynamically
+    function renderQuestion(qIndex) {
+      const q = questions[qIndex - 1];
+      questionTag.textContent = `Question ${qIndex} of 7`;
+      questionText.textContent = q.text;
+      stepCategoryBadge.textContent = q.category;
+      stepNumberIndicator.textContent = `${qIndex} / 7`;
+      
+      // Progress calculation: Step 1-7 accounts for ~12.5% to ~87.5%
+      const pct = (qIndex / 8) * 100;
+      progressBarFill.style.width = `${pct}%`;
+
+      nextBtnText.textContent = (qIndex === 7) ? "Continue to Photo Scan" : "Next Question";
+      surveyError.classList.add('hidden');
+
+      // Update Option Cards Text based on type (frequency vs laterality)
+      const optionCards = document.querySelectorAll('.option-card');
+      if (q.type === 'laterality') {
+        const labels = ['Right eye only', 'Left eye only', 'Both eyes', ''];
+        optionCards.forEach((card, idx) => {
+          const textSpan = card.querySelector('span.text-sm');
+          if (idx < 3) {
+            card.style.display = 'flex';
+            if (textSpan) textSpan.textContent = labels[idx];
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      } else {
+        const labels = ['Never', 'Occasionally', 'Frequently', 'Always'];
+        optionCards.forEach((card, idx) => {
+          card.style.display = 'flex';
+          const textSpan = card.querySelector('span.text-sm');
+          if (textSpan) textSpan.textContent = labels[idx];
+        });
+      }
+
+      // Update Option Selection Highlight
+      const currentVal = userAnswers[qIndex];
+      optionCards.forEach((card, idx) => {
+        const dot = card.querySelector('.radio-dot');
+        const circle = card.querySelector('.radio-circle');
+        if (currentVal !== undefined && currentVal === idx) {
+          card.classList.add('selected');
+          dot.classList.remove('hidden');
+          circle.classList.remove('border-slate-500');
+          circle.classList.add('border-cyan-400');
+        } else {
+          card.classList.remove('selected');
+          dot.classList.add('hidden');
+          circle.classList.add('border-slate-500');
+          circle.classList.remove('border-cyan-400');
+        }
+      });
+    }
+
+    // Option Click Handler
+    function selectOption(scoreVal) {
+      userAnswers[currentStep] = scoreVal;
+      surveyError.classList.add('hidden');
+      renderQuestion(currentStep);
+    }
+
+    // Next Button Handler with Validation
+    function handleNextStep() {
+      if (userAnswers[currentStep] === undefined) {
+        surveyError.classList.remove('hidden');
+        // Gentle vibration/shake feedback
+        questionnaireView.classList.add('animate-pulse');
+        setTimeout(() => questionnaireView.classList.remove('animate-pulse'), 300);
+        return;
+      }
+
+      if (currentStep < 7) {
+        goToStep(currentStep + 1);
+      } else {
+        // Move to Image Upload (Step 8)
+        goToStep(8);
+      }
+    }
+
+    // Back Button Handler
+    function handleBackStep() {
+      if (currentStep === 1) {
+        goToStep(0);
+      } else {
+        goToStep(currentStep - 1);
+      }
+    }
+
+    // Drag & Drop Setup
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        validateAndProcessFile(files[0]);
+      }
+    });
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        validateAndProcessFile(file);
+      }
+    }
+
+    function validateAndProcessFile(file) {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        showUploadError("Invalid file type. Please upload a .jpg or .png image.");
+        return;
+      }
+
+      // Check size (<= 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        showUploadError("File exceeds 10MB limit. Please upload a smaller image.");
+        return;
+      }
+
+      uploadError.classList.add('hidden');
+      uploadedFileName = file.name;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageDataUrl = e.target.result;
+        displayUploadedPreview(uploadedImageDataUrl, file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function displayUploadedPreview(src, name) {
+      imagePreview.src = src;
+      previewFileName.textContent = name;
+      uploadPrompt.classList.add('hidden');
+      uploadPreviewContainer.classList.remove('hidden');
+      uploadPreviewContainer.classList.add('flex');
+    }
+
+    function removeUploadedImage(e) {
+      if (e) e.stopPropagation();
+      uploadedImageDataUrl = null;
+      uploadedFileName = "";
+      eyeFileInput.value = "";
+      uploadPreviewContainer.classList.add('hidden');
+      uploadPreviewContainer.classList.remove('flex');
+      uploadPrompt.classList.remove('hidden');
+    }
+
+    // Sample clinical image loader
+    function useSampleImage(e) {
+      if (e) e.stopPropagation();
+      uploadedImageDataUrl = "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80";
+      uploadedFileName = "clinical_iris_sample.jpg";
+      displayUploadedPreview(uploadedImageDataUrl, uploadedFileName);
+      uploadError.classList.add('hidden');
+    }
+
+    function showUploadError(msg) {
+      uploadErrorText.textContent = msg;
+      uploadError.classList.remove('hidden');
+    }
+
+    // Submit for Analysis with Image Validation
+    function submitForAnalysis() {
+      if (!uploadedImageDataUrl) {
+        showUploadError("Please upload or select an eye image before submitting.");
+        return;
+      }
+      goToStep(8);
+    }
+
+    // Step 8: Simulated 3-Second AI Analysis
+    function startAnalysisSimulation() {
+      loadingState.classList.remove('hidden');
+      resultsState.classList.add('hidden');
+
+      const statusMessages = [
+        "Analyzing corneal reflection and tear film breakup time...",
+        "Evaluating questionnaire symptom index...",
+        "Synthesizing combined risk profile..."
+      ];
+
+      let msgIndex = 0;
+      const interval = setInterval(() => {
+        msgIndex++;
+        if (msgIndex < statusMessages.length) {
+          loadingSubtext.textContent = statusMessages[msgIndex];
+        }
+      }, 950);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        showResults();
+      }, 3000);
+    }
+
+    // Calculate score & present results
+    function showResults() {
+      // Score calculation: Never=0, Occasionally=1, Frequently=2, Always=3
+      // Max score = 6 * 3 = 18.
+      let totalScore = 0;
+      for (let i = 1; i <= 6; i++) {
+        totalScore += (userAnswers[i] !== undefined ? userAnswers[i] : 0);
+      }
+
+      loadingState.classList.add('hidden');
+      resultsState.classList.remove('hidden');
+
+      // Update Thumbnail & filename in summary
+      document.getElementById('summary-eye-thumbnail').src = uploadedImageDataUrl || "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=200&q=80";
+      document.getElementById('summary-file-label').textContent = uploadedFileName || "Ocular scan complete";
+
+      const scoreNumEl = document.getElementById('score-display-number');
+      const scoreMeter = document.getElementById('score-meter');
+      const badgeIcon = document.getElementById('risk-badge-icon');
+      const badgeLabel = document.getElementById('risk-badge-label');
+      const summaryText = document.getElementById('analysis-summary-text');
+
+      scoreNumEl.textContent = totalScore;
+      const percentage = Math.min(100, Math.round((totalScore / 18) * 100));
+      scoreMeter.style.width = `${Math.max(6, percentage)}%`;
+
+      // Threshold classification:
+      // 0 - 6: Normal Eyes (green badge)
+      // 7 - 12: Mild Dry Eye Risk (yellow/amber badge)
+      // 13 - 18: High Dry Eye Risk (red badge)
+      if (totalScore <= 6) {
+        badgeIcon.className = "w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-400";
+        badgeIcon.innerHTML = "✅";
+        badgeLabel.className = "inline-block px-3.5 py-1 rounded-full text-xs font-bold tracking-wide border uppercase bg-emerald-500/20 text-emerald-300 border-emerald-400/40";
+        badgeLabel.textContent = "Normal Eyes";
+        scoreMeter.className = "h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-700";
+        summaryText.innerHTML = "<strong>Low ocular irritation detected.</strong> Your tear film stability metrics appear normal, with minimal strain indicators.";
+      } else if (totalScore <= 12) {
+        badgeIcon.className = "w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-lg bg-amber-500/20 border border-amber-400/40 text-amber-400";
+        badgeIcon.innerHTML = "⚠️";
+        badgeLabel.className = "inline-block px-3.5 py-1 rounded-full text-xs font-bold tracking-wide border uppercase bg-amber-500/20 text-amber-300 border-amber-400/40";
+        badgeLabel.textContent = "Mild Dry Eye Risk";
+        scoreMeter.className = "h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full transition-all duration-700";
+        summaryText.innerHTML = "<strong>Mild ocular surface dryness indicated.</strong> Intermittent screen fatigue and sensitivity suggest early tear evaporation.";
+      } else {
+        badgeIcon.className = "w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-lg bg-rose-500/20 border border-rose-400/40 text-rose-400";
+        badgeIcon.innerHTML = "🔴";
+        badgeLabel.className = "inline-block px-3.5 py-1 rounded-full text-xs font-bold tracking-wide border uppercase bg-rose-500/20 text-rose-300 border-rose-400/40";
+        badgeLabel.textContent = "High Dry Eye Risk";
+        scoreMeter.className = "h-full bg-gradient-to-r from-orange-500 to-rose-500 rounded-full transition-all duration-700";
+        summaryText.innerHTML = "<strong>Significant dry eye symptoms detected.</strong> Frequent grittiness, burning, or reflex tearing strongly indicate meibomian or tear deficiency.";
+      }
+    }
+
+    // Restart Function
+    function restartAssessment() {
+      userAnswers = {};
+      removeUploadedImage();
+      goToStep(0);
+    }
+  </script>
+</body>
+</html>
