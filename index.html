@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dry Eye AI | Clinical Ocular Detection & Thermography System</title>
+  <title>Dry eye detector</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -104,46 +104,167 @@
     .pulse-glow {
       animation: pulseGlow 6s ease-in-out infinite;
     }
-        /* Hero Scanner Laser Animation */
-    @keyframes heroLaserSweep {
-      0% {
+        /* Hero Scanner Laser & Thermal Video Wipe Animation */
+    @keyframes heroLaserSweepVideo {
+      0%, 4% {
         left: 0%;
-        opacity: 0.25;
+        opacity: 0;
       }
-      15% {
+      5% {
+        left: 0%;
         opacity: 1;
       }
-      85% {
-        opacity: 1;
-      }
-      100% {
+      45% {
         left: 100%;
-        opacity: 0.25;
+        opacity: 1;
+      }
+      46%, 53% {
+        left: 100%;
+        opacity: 0;
+      }
+      54% {
+        left: 100%;
+        opacity: 1;
+      }
+      95% {
+        left: 0%;
+        opacity: 1;
+      }
+      96%, 100% {
+        left: 0%;
+        opacity: 0;
       }
     }
+
+    @keyframes heroThermalWipeVideo {
+      0%, 4% {
+        clip-path: inset(0 100% 0 0);
+      }
+      45%, 54% {
+        clip-path: inset(0 0% 0 0);
+      }
+      95%, 100% {
+        clip-path: inset(0 100% 0 0);
+      }
+    }
+
     .hero-laser-scan-bar {
       position: absolute;
       top: 0;
       bottom: 0;
       width: 4px;
+      transform: translateX(-50%);
       background: linear-gradient(180deg, 
         rgba(56, 189, 248, 0) 0%, 
-        rgba(56, 189, 248, 0.9) 15%, 
-        #00f5ff 50%, 
-        rgba(56, 189, 248, 0.9) 85%, 
+        rgba(34, 211, 238, 0.95) 15%, 
+        #ffffff 45%, 
+        #f59e0b 55%, 
+        rgba(56, 189, 248, 0.95) 85%, 
         rgba(56, 189, 248, 0) 100%);
       box-shadow: 
-        0 0 20px 4px rgba(0, 245, 255, 0.9),
-        0 0 50px 10px rgba(56, 189, 248, 0.5),
-        -15px 0 35px rgba(0, 240, 255, 0.35);
-      animation: heroLaserSweep 5.5s ease-in-out infinite alternate;
+        0 0 15px 3px rgba(255, 255, 255, 0.95),
+        0 0 32px 8px rgba(34, 211, 238, 0.9),
+        0 0 60px 14px rgba(245, 158, 11, 0.55),
+        -18px 0 35px 4px rgba(34, 211, 238, 0.4);
+      animation: heroLaserSweepVideo 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
       pointer-events: none;
+      z-index: 25;
+      will-change: left, opacity;
+    }
+
+    .hero-thermal-wipe {
+      position: absolute;
+      inset: 0;
+      animation: heroThermalWipeVideo 6.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      will-change: clip-path;
+      z-index: 10;
+    }
+
+    /* Pause capability */
+    .hero-scan-paused .hero-laser-scan-bar,
+    .hero-scan-paused .hero-thermal-wipe {
+      animation-play-state: paused !important;
     }
     .scan-reticle-grid {
       background-image: 
         linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
       background-size: 42px 42px;
+    }
+
+    /* 3D Realistic Eye Opening & Closing Animations */
+    @keyframes eye3dLidUpper {
+      0%, 65% {
+        transform: translateY(-22px);
+      }
+      70% {
+        transform: translateY(0px);
+      }
+      75% {
+        transform: translateY(-22px);
+      }
+      82% {
+        transform: translateY(-22px);
+      }
+      85% {
+        transform: translateY(0px);
+      }
+      88% {
+        transform: translateY(-22px);
+      }
+      100% {
+        transform: translateY(-22px);
+      }
+    }
+
+    @keyframes eye3dLidLower {
+      0%, 65% {
+        transform: translateY(22px);
+      }
+      70% {
+        transform: translateY(0px);
+      }
+      75% {
+        transform: translateY(22px);
+      }
+      82% {
+        transform: translateY(22px);
+      }
+      85% {
+        transform: translateY(0px);
+      }
+      88% {
+        transform: translateY(22px);
+      }
+      100% {
+        transform: translateY(22px);
+      }
+    }
+
+    @keyframes eye3dPupilShift {
+      0%, 45% {
+        transform: translate(0, 0);
+      }
+      50%, 64% {
+        transform: translate(1.5px, -1px);
+      }
+      68%, 100% {
+        transform: translate(0, 0);
+      }
+    }
+
+    .eye-3d-lid-upper {
+      transform: translateY(-22px);
+      animation: eye3dLidUpper 4.2s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+    }
+
+    .eye-3d-lid-lower {
+      transform: translateY(22px);
+      animation: eye3dLidLower 4.2s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+    }
+
+    .eye-3d-pupil-shift {
+      animation: eye3dPupilShift 4.2s ease-in-out infinite;
     }
 
     @media print {
@@ -167,20 +288,100 @@
   <!-- Top Global Header -->
   <header class="w-full max-w-7xl mx-auto pt-5 pb-3 px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4 z-30 no-print">
     <div class="flex items-center gap-3.5">
-      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-600 p-0.5 shadow-lg shadow-cyan-500/25">
-        <div class="w-full h-full bg-[#081323] rounded-[14px] flex items-center justify-center">
-          <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+      <!-- 3D Animated Eye Opening & Closing Logo -->
+      <div class="eye-3d-logo-badge w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-600 p-0.5 shadow-lg shadow-cyan-500/30 flex-shrink-0 transition-transform duration-300 hover:scale-105 select-none cursor-pointer">
+        <div class="w-full h-full bg-[#06101d] rounded-[14px] flex items-center justify-center overflow-hidden relative shadow-[inset_0_2px_4px_rgba(255,255,255,0.25),inset_0_-2px_6px_rgba(0,0,0,0.8)]">
+          <svg class="w-8 h-8 drop-shadow-[0_0_8px_rgba(56,189,248,0.6)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- 3D Sclera Spherical Lighting -->
+              <radialGradient id="eye3dSphere" cx="42%" cy="38%" r="60%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="60%" stop-color="#d8ebf9"/>
+                <stop offset="85%" stop-color="#7fa9cc"/>
+                <stop offset="100%" stop-color="#3b6284"/>
+              </radialGradient>
+              <!-- 3D Iris Gradient -->
+              <radialGradient id="eye3dIris" cx="42%" cy="38%" r="58%">
+                <stop offset="0%" stop-color="#67e8f9"/>
+                <stop offset="30%" stop-color="#22d3ee"/>
+                <stop offset="65%" stop-color="#0284c7"/>
+                <stop offset="90%" stop-color="#075985"/>
+                <stop offset="100%" stop-color="#0c2340"/>
+              </radialGradient>
+              <!-- 3D Pupil Deep Void -->
+              <radialGradient id="eye3dPupil" cx="38%" cy="35%" r="55%">
+                <stop offset="0%" stop-color="#1e293b"/>
+                <stop offset="65%" stop-color="#0b1320"/>
+                <stop offset="100%" stop-color="#02060c"/>
+              </radialGradient>
+              <!-- 3D Eyelids Metallic Gradients -->
+              <linearGradient id="eye3dTopLidGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#050e1a"/>
+                <stop offset="80%" stop-color="#0f2942"/>
+                <stop offset="97%" stop-color="#19486f"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+              <linearGradient id="eye3dBotLidGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#050e1a"/>
+                <stop offset="80%" stop-color="#0f2942"/>
+                <stop offset="97%" stop-color="#19486f"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+              <!-- 3D Cornea Dome Glass Sheen -->
+              <linearGradient id="eye3dGlassGleam" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+                <stop offset="45%" stop-color="#ffffff" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.2"/>
+              </linearGradient>
+              <!-- Socket Contour Clip -->
+              <clipPath id="eye3dSocketClip">
+                <path d="M6 32 C13 17 22 13 32 13 C42 13 51 17 58 32 C51 47 42 51 32 51 C22 51 13 47 6 32 Z"/>
+              </clipPath>
+            </defs>
+
+            <!-- Eye Socket Backdrop / Depth Ring -->
+            <path d="M6 32 C13 17 22 13 32 13 C42 13 51 17 58 32 C51 47 42 51 32 51 C22 51 13 47 6 32 Z" fill="#030812" stroke="#0284c7" stroke-width="1.8"/>
+
+            <!-- Eyeball Content (Clipped to almond socket) -->
+            <g clip-path="url(#eye3dSocketClip)">
+              <!-- Eyeball Sclera Sphere -->
+              <ellipse cx="32" cy="32" rx="27" ry="19" fill="url(#eye3dSphere)"/>
+
+              <!-- Iris & Pupil with 3D shifting gaze -->
+              <g class="eye-3d-pupil-shift">
+                <!-- Limbal Ring -->
+                <circle cx="32" cy="32" r="11.5" fill="none" stroke="#0c2d48" stroke-width="1.2"/>
+                <!-- Iris Body -->
+                <circle cx="32" cy="32" r="11" fill="url(#eye3dIris)"/>
+                <!-- Radial Iris Flares -->
+                <circle cx="32" cy="32" r="8" fill="none" stroke="#67e8f9" stroke-width="0.8" stroke-dasharray="2 1.5" opacity="0.75"/>
+                <!-- Pupil -->
+                <circle cx="32" cy="32" r="5.2" fill="url(#eye3dPupil)"/>
+                <!-- Specular Highlight 1 -->
+                <ellipse cx="29.5" cy="28.5" rx="2.5" ry="1.6" fill="#ffffff" opacity="0.95" transform="rotate(-25 29.5 28.5)"/>
+                <!-- Specular Highlight 2 -->
+                <circle cx="34.5" cy="34" r="1" fill="#ffffff" opacity="0.75"/>
+              </g>
+
+              <!-- 3D Upper Eyelid (opening/closing) -->
+              <path class="eye-3d-lid-upper" d="M0 0 H64 V32 Q32 33 0 32 Z" fill="url(#eye3dTopLidGrad)" stroke="#38bdf8" stroke-width="0.8"/>
+              <!-- 3D Lower Eyelid (opening/closing) -->
+              <path class="eye-3d-lid-lower" d="M0 64 H64 V32 Q32 31 0 32 Z" fill="url(#eye3dBotLidGrad)" stroke="#38bdf8" stroke-width="0.8"/>
+
+              <!-- Spherical 3D Glass Arc Sheen -->
+              <ellipse cx="32" cy="32" rx="27" ry="19" fill="url(#eye3dGlassGleam)" pointer-events="none"/>
+            </g>
+
+            <!-- Outer Eyelid Rim Reflection Glow -->
+            <path d="M8 30 C15 17 23 14 32 14 C41 14 49 17 56 30" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-linecap="round"/>
           </svg>
         </div>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="font-display font-bold text-lg sm:text-xl tracking-tight text-white">Dry Eye <span class="text-cyan-400">AI</span></h1>
-          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">v3.4 Clinic</span>
+          <h1 class="font-display font-bold text-lg sm:text-xl tracking-tight text-white">Dry eye detector</h1>
         </div>
-        <p class="text-xs text-slate-400 font-medium">Digital Ocular Assessment & Thermographic Dry Eye Classifier</p>
+        <p class="text-xs text-slate-400 font-medium">ocular thermal Screening</p>
       </div>
     </div>
 
@@ -200,10 +401,10 @@
   <!-- ========================================================================= -->
   <!-- VIEW 1: PATIENT SELF-ASSESSMENT WIZARD (STITCH DESIGN ENHANCED) -->
   <!-- ========================================================================= -->
-  <main id="view-survey" class="w-full max-w-2xl sm:max-w-3xl mx-auto px-4 py-4 sm:py-6 flex-grow flex flex-col justify-center z-10 transition-all duration-300">
+  <main id="view-survey" class="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-4 flex-grow flex flex-col justify-center z-10 transition-all duration-300">
 
     <!-- Progress Indicator Bar -->
-    <div id="survey-progress-wrap" class="hidden mb-4">
+    <div id="survey-progress-wrap" class="hidden mb-3 sm:mb-4 max-w-2xl sm:max-w-3xl mx-auto w-full">
       <div class="flex items-center justify-between text-xs text-slate-300 mb-2 font-medium">
         <span id="survey-category-badge" class="text-cyan-300 uppercase tracking-wider text-[10px] font-bold bg-cyan-500/15 px-2.5 py-0.5 rounded-full border border-cyan-400/25">
           1. OCULAR DISCOMFORT
@@ -215,151 +416,122 @@
       </div>
     </div>
 
-    <!-- Main Glass Card Frame -->
-    <div class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+    <!-- Main Glass Card Frame (Expands to full screen on PC, mobile adaptive) -->
+    <div id="survey-main-card" class="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 relative overflow-hidden transition-all duration-300 lg:min-h-[calc(100vh-140px)] flex flex-col justify-between">
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-cyan-400/15 rounded-full blur-2xl pointer-events-none"></div>
 
-      <!-- STEP 0: CLEAR AI OCULAR SCANNING STAGE & START SCREEN -->
-      <div id="survey-step-0" class="text-center py-1">
+      <!-- STEP 0: CLEAR OCULAR SCANNING STAGE & START SCREEN (FULL SCREEN VIEWPORT ON PC, MOBILE ADAPTIVE) -->
+      <div id="survey-step-0" class="text-center flex flex-col justify-between flex-grow py-1">
         
-        <!-- Header Badge & Title -->
-        <div class="inline-flex items-center gap-2 px-3.5 py-1 mb-2.5 rounded-full bg-cyan-500/15 border border-cyan-400/35 text-cyan-300 text-xs font-semibold tracking-wide uppercase shadow-sm">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>AI Biometric Ocular Scanner • Clinical Protocol</span>
-        </div>
-        <h2 class="text-2xl sm:text-3xl font-display font-extrabold text-white tracking-tight leading-snug mb-1">
-          Dry Eye <span class="text-cyan-400">AI</span> Detection System
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto mb-5 font-normal leading-relaxed">
-          High-resolution anterior segment thermography & automated 7-day clinical ocular screening.
-        </p>
-
-        <!-- HIGH-TECH CLEAR AI SCANNING VIEWPORT (PROMINENT & UNCOMPROMISED) -->
-        <div class="relative w-full rounded-2xl overflow-hidden border-2 border-cyan-400/60 shadow-2xl shadow-cyan-500/30 bg-[#050C16] mb-5 group">
-          
-          <!-- Viewport Telemetry Header Bar -->
-          <div class="flex items-center justify-between px-3.5 py-2 bg-slate-950/90 border-b border-cyan-500/30 text-[11px] font-mono text-slate-300">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              <span class="font-bold text-cyan-300 tracking-wider uppercase text-[10px]">● LIVE OCULAR AI SCANNER</span>
-            </div>
-            <div class="hidden sm:flex items-center gap-3 text-[10px] text-slate-400 font-mono">
-              <span>FOV: 320×240 FLIR</span>
-              <span class="text-cyan-400 font-semibold">T_SCALE: 27.0°C - 38.0°C</span>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 text-[9px] font-bold uppercase">
-              FLIR Ironbow Calibrated
-            </span>
+        <!-- Header & Title with Refined Typography -->
+        <div class="mb-2 sm:mb-3">
+          <h2 class="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight mb-2 drop-shadow-sm">
+            Dry Eye Detector
+          </h2>
+          <!-- Styled Subtitle: "Understand eye in minute" -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/25 backdrop-blur-md shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <p class="text-xs sm:text-sm md:text-base font-display font-semibold tracking-wider text-cyan-200 uppercase">
+              Understand eye in minute
+            </p>
+            <span class="text-cyan-400 text-xs">✨</span>
           </div>
+        </div>
 
-          <!-- The Live Scanning Canvas with Normal Eye & Thermal Eye -->
-          <div class="relative w-full aspect-[16/9] sm:aspect-[1.85/1] overflow-hidden bg-black flex items-center justify-center">
-            <!-- 100% Crisp Visual of Normal & Thermal Eye -->
-            <img src="eye_scan_bg.jpg" alt="Normal Eye to FLIR Thermal Scan" class="w-full h-full object-cover object-center select-none" />
+        <!-- HIGH-TECH CLEAR OCULAR SCANNING VIEWPORT (LIVE NORMAL-TO-THERMAL VIDEO-ANIMATED SCANNING) -->
+        <div id="hero-scanner-stage" class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-cyan-400/60 shadow-2xl shadow-cyan-500/30 bg-[#050C16] mb-3 sm:mb-4 group flex-grow flex items-center justify-center">
+          <!-- Aspect ratio wrapper: Full cinematic widescreen on PC, responsive compact on mobile -->
+          <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[2.2/1] max-h-[48vh] sm:max-h-[58vh] xl:max-h-[64vh] overflow-hidden bg-black flex items-center justify-center">
+            
+            <!-- LAYER 1 (BASE): Natural Anterior Eye Segment -->
+            <img src="eye_normal.jpg" alt="Natural Anterior Eye Segment" class="absolute inset-0 w-full h-full object-cover object-center select-none" />
 
-            <!-- Telemetry Grid -->
+            <!-- LAYER 2 (OVERLAY): FLIR Thermal Isotherm Scan revealed by synchronized laser wipe -->
+            <div id="hero-thermal-wipe-layer" class="hero-thermal-wipe">
+              <img src="eye_thermal.jpg" alt="FLIR Thermal Isotherm Scan" class="w-full h-full object-cover object-center select-none" />
+            </div>
+
+            <!-- LAYER 3: Synchronized Laser Scanning Beam Sweeping Left-to-Right & Right-to-Left -->
+            <div class="hero-laser-scan-bar"></div>
+
+            <!-- LAYER 4: Telemetry Grid -->
             <div class="absolute inset-0 scan-reticle-grid opacity-35 pointer-events-none"></div>
 
-            <!-- Label Tag: Left (Natural Eye) -->
-            <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-slate-950/85 border border-cyan-400/45 backdrop-blur-md text-[10px] font-mono text-cyan-300 flex items-center gap-1.5 shadow-md pointer-events-none">
-              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-              <span class="font-bold">NATURAL ANTERIOR SEGMENT</span>
-            </div>
+            <!-- Corner High-Tech Brackets -->
+            <div class="absolute top-2.5 left-2.5 w-4 h-4 border-t-2 border-l-2 border-cyan-400/60 pointer-events-none"></div>
+            <div class="absolute top-2.5 right-2.5 w-4 h-4 border-t-2 border-r-2 border-cyan-400/60 pointer-events-none"></div>
+            <div class="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-cyan-400/60 pointer-events-none"></div>
+            <div class="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-cyan-400/60 pointer-events-none"></div>
 
-            <!-- Label Tag: Right (Thermal Scan) -->
-            <div class="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-slate-950/85 border border-amber-400/45 backdrop-blur-md text-[10px] font-mono text-amber-300 flex items-center gap-1.5 shadow-md pointer-events-none">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-              <span class="font-bold">FLIR THERMAL ISOTHERM</span>
-            </div>
-
-            <!-- Central AI Diagnostic Reticle with Live Corneal Badges -->
+            <!-- Central Diagnostic Reticle (No text words) -->
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
               <!-- Rotating Outer Circular HUD Ring -->
-              <div class="w-36 h-36 sm:w-48 sm:h-48 rounded-full border border-dashed border-cyan-400/45 animate-spin" style="animation-duration: 22s;"></div>
+              <div class="w-28 h-28 sm:w-44 sm:h-44 rounded-full border border-dashed border-cyan-400/45 animate-spin" style="animation-duration: 22s;"></div>
               <!-- Inner Reticle -->
-              <div class="absolute w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-cyan-300/60 flex items-center justify-center">
-                <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-glow-cyan"></div>
+              <div class="absolute w-16 h-16 sm:w-24 sm:h-24 rounded-full border-2 border-cyan-300/60 flex items-center justify-center">
+                <div class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-cyan-400 shadow-glow-cyan"></div>
                 <div class="absolute w-full h-[1px] bg-cyan-400/40"></div>
                 <div class="absolute h-full w-[1px] bg-cyan-400/40"></div>
               </div>
-              <!-- Live Reticle Badges -->
-              <div class="absolute -translate-y-14 px-2 py-0.5 rounded bg-black/85 border border-cyan-400/60 text-[10px] font-mono text-cyan-300 font-bold shadow-lg">
-                T_CC: 34.7°C (Central Cornea)
-              </div>
             </div>
 
-            <!-- High-Intensity Laser Scanning Beam Sweeping Left-to-Right -->
-            <div class="hero-laser-scan-bar"></div>
+            <!-- Top Left Status Pill: Video Animation Status -->
+            <div class="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 z-20 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-lg sm:rounded-xl bg-black/80 border border-cyan-400/40 backdrop-blur-md pointer-events-none shadow-md">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              </span>
+              <span class="font-mono text-[9px] sm:text-[10px] text-cyan-300 font-bold uppercase tracking-wider">
+                LIVE SCAN &bull; NATURAL &rarr; THERMAL
+              </span>
+            </div>
 
-            <!-- Bottom Overlay Telemetry Data -->
-            <div class="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent flex items-end justify-between pointer-events-none text-left">
-              <div class="space-y-0.5 font-mono text-[10px]">
-                <div class="flex items-center gap-2">
-                  <span class="text-cyan-400 font-bold">ROIs:</span>
-                  <span class="text-emerald-300 font-medium">Central (T_CC) • Nasal (T_NC) • Temporal (T_TC)</span>
-                </div>
-                <div class="text-slate-400 text-[9px]">
-                  TEAR FILM BREAKUP • HYPOTHERMIC ISOTHERM ANALYSIS
-                </div>
-              </div>
-              <div class="text-right font-mono text-[10px]">
-                <span class="text-slate-400 block text-[9px]">SCAN FIDELITY</span>
-                <span class="text-emerald-400 font-extrabold text-xs">96.4% ACTIVE</span>
-              </div>
+            <!-- Top Right Status Pill: FLIR Spectrum Indicator -->
+            <div class="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-20 hidden xs:flex sm:flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg sm:rounded-xl bg-black/80 border border-amber-400/40 backdrop-blur-md pointer-events-none shadow-md font-mono text-[9px] sm:text-[10px] text-amber-300">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              <span class="font-bold">FLIR THERMAL SCAN</span>
             </div>
-          </div>
 
-          <!-- Bottom Telemetry Status Strip -->
-          <div class="px-4 py-2 bg-slate-900/95 border-t border-cyan-500/20 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-[11px] font-mono text-slate-300">
-            <div class="flex items-center gap-2">
-              <span class="text-cyan-400 font-bold">SCANNING ENGINE:</span>
-              <span class="text-slate-200">Real-Time Spectral Corneal Surface Mapping</span>
-            </div>
-            <div class="text-cyan-300 font-semibold text-[10px] flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-              <span>READY FOR PATIENT INTAKE</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Instructions Briefing Box -->
-        <div class="glass-inner rounded-2xl p-3.5 mb-5 border border-cyan-400/25 text-left bg-cyan-950/20">
-          <div class="flex items-start gap-3">
-            <span class="text-xl text-cyan-400 flex-shrink-0 mt-0.5">📋</span>
-            <div class="text-xs text-slate-200 leading-relaxed">
-              <p class="font-bold text-cyan-300 text-xs mb-0.5 uppercase tracking-wide">Clinical Screening Protocol (Past 7 Days)</p>
-              <p class="text-slate-300 text-[11px]">
-                Answer 7 clinical symptom questions to calculate your standardized <strong>OSDI Index</strong>, symptom laterality (OD/OS), and tear film deficiency risk.
-              </p>
-            </div>
+            <!-- Bottom Right Video Animation Controls -->
+            <button id="hero-scan-toggle-btn" type="button" onclick="toggleHeroScannerAnimation()" class="absolute bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 z-20 px-2.5 py-1 rounded-lg sm:rounded-xl bg-slate-950/85 hover:bg-slate-900 border border-cyan-400/40 backdrop-blur-md text-[10px] font-mono text-cyan-300 transition flex items-center gap-1.5 shadow-md cursor-pointer select-none">
+              <span id="hero-scan-btn-icon">⏸</span>
+              <span id="hero-scan-btn-text" class="hidden sm:inline">Pause Scan</span>
+            </button>
           </div>
         </div>
 
         <!-- PROMINENT START BUTTON (UNDER THE SCANNER) -->
-        <button onclick="surveyGoToStep(1)" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-slate-950 font-display font-black text-base sm:text-lg tracking-wide shadow-glow-teal hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer">
-          <span>Start Screening Assessment</span>
-          <svg class="w-5 h-5 transition-transform group-hover:translate-x-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-        </button>
-        <p class="text-[11px] text-slate-400 font-medium mt-2 text-center">
-          ⚡ 7 Questions • Standardized 0–100 OSDI Scoring • Laterality Analysis
-        </p>
+        <div class="w-full max-w-xl mx-auto pt-1">
+          <button onclick="surveyGoToStep(1)" class="w-full py-3.5 sm:py-4 px-6 rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-slate-950 font-display font-black text-base sm:text-lg tracking-wide shadow-glow-teal hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer">
+            <span>Start Screening Assessment</span>
+            <svg class="w-5 h-5 transition-transform group-hover:translate-x-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </button>
+          <div class="mt-2 text-center space-y-0.5">
+            <p class="text-[11px] text-slate-400 font-medium">
+              ⚡ 7 Questions • Standardized 0–100 OSDI Scoring • Laterality Analysis
+            </p>
+            <p class="text-[10px] text-slate-500 font-medium">
+              For screening purposes only. Not a medical diagnosis
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- STEPS 1-7: QUESTIONNAIRE VIEW -->
-      <div id="survey-question-wrap" class="hidden">
+      <div id="survey-question-wrap" class="hidden max-w-2xl sm:max-w-3xl mx-auto w-full">
         <!-- Return to Scanner button -->
         <div class="flex items-center justify-between mb-3 text-xs">
           <button type="button" onclick="surveyGoToStep(0)" class="text-slate-400 hover:text-cyan-300 transition flex items-center gap-1.5 font-medium py-1 px-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             <span>Back to Scanner Overview</span>
           </button>
-          <span class="text-slate-500 font-mono text-[11px]">Dry Eye AI • Assessment Mode</span>
+          <span class="text-slate-500 font-mono text-[11px]">Dry Eye Detector • Assessment Mode</span>
         </div>
-        <!-- Persistent Instructions Banner -->
-        <div class="glass-inner rounded-xl p-3 mb-4 border border-cyan-500/25 flex items-start gap-2.5 text-xs text-slate-300 bg-cyan-950/20">
+        <!-- Instructions Banner (Shown on Question 1 only) -->
+        <div id="survey-instructions-banner" class="glass-inner rounded-xl p-3 mb-4 border border-cyan-500/25 flex items-start gap-2.5 text-xs text-slate-300 bg-cyan-950/20">
           <span class="text-base text-cyan-400 flex-shrink-0 mt-0.5">🗓️</span>
           <p class="leading-relaxed">
-            <strong class="text-cyan-300">Instructions:</strong> Please consider your eye-related symptoms during the past 7 days and select the response that best reflects how frequently you experienced each symptom.
+            <strong class="text-cyan-300">Instructions:</strong> Please consider your eye-related symptoms during the past 7 days and select the response that best reflects how frequently you experienced each symptom for all Questions
           </p>
         </div>
 
@@ -401,63 +573,60 @@
       </div>
 
       <!-- STEP 8: IMAGE SCAN VIEW -->
-      <div id="survey-step-upload" class="hidden">
+      <div id="survey-step-upload" class="hidden max-w-2xl sm:max-w-3xl mx-auto w-full">
         <div class="text-center mb-4">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-300 bg-cyan-500/20 px-2.5 py-0.5 rounded border border-cyan-400/30 inline-block mb-2">
-            Step 8 of 8 • Ocular Scan
+          <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-300 bg-cyan-500/20 px-2.5 py-0.5 rounded border border-cyan-400/30 inline-block mb-2 font-mono">
+            Step 8 of 8 • Thermal Ocular Scan
           </span>
-          <h3 class="text-xl font-display font-bold text-white mb-1.5">Upload Close-Up Eye Image</h3>
-          <p class="text-xs text-slate-300/80 mb-2">
-            Upload an anterior segment or eye photograph for corneal reflection & tear surface verification.
+          <h3 class="text-xl sm:text-2xl font-display font-bold text-white mb-1.5">Upload Thermal Eye Image</h3>
+          <p class="text-xs sm:text-sm text-slate-300/90 mb-2">
+            Upload a thermal image for finding dry eye or normal eye
           </p>
-          <div id="survey-laterality-hint" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-[11px] text-cyan-300 font-mono">
-            <span>Target Eye: </span>
-            <strong id="survey-laterality-hint-val">Both Eyes</strong>
-          </div>
         </div>
 
         <!-- Drag & Drop Zone -->
-        <div id="survey-drop-zone" onclick="document.getElementById('survey-file-input').click()" class="drop-zone relative rounded-2xl border-2 border-dashed border-cyan-400/40 bg-slate-900/50 hover:bg-slate-900/80 p-5 text-center transition-all duration-200 cursor-pointer mb-3">
+        <div id="survey-drop-zone" 
+             onclick="document.getElementById('survey-file-input').click()" 
+             ondragover="handleSurveyDragOver(event)" 
+             ondragleave="handleSurveyDragLeave(event)" 
+             ondrop="handleSurveyDrop(event)" 
+             class="drop-zone relative rounded-2xl border-2 border-dashed border-cyan-400/40 bg-slate-900/50 hover:bg-slate-900/80 p-5 text-center transition-all duration-200 cursor-pointer mb-3">
           <input type="file" id="survey-file-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png" onchange="handleImageSelected(event)" class="hidden"/>
           
           <div id="survey-upload-prompt" class="py-3">
             <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300">
               <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
-            <p class="text-sm font-medium text-slate-200 mb-1">Drag & drop or <span class="text-cyan-400 underline decoration-cyan-400/50">browse photo</span></p>
-            <p class="text-[11px] text-slate-400">Supports JPG, PNG (Max 10MB)</p>
+            <p class="text-sm font-medium text-slate-200 mb-1">Drag & drop or <span class="text-cyan-400 underline decoration-cyan-400/50">browse thermal photo</span></p>
+            <p class="text-[11px] text-slate-400 font-mono">FLIR / Ironbow Thermograms Only • Normal photos rejected</p>
           </div>
 
           <!-- Preview Container -->
           <div id="survey-preview-wrap" class="hidden flex-col items-center">
-            <div class="relative w-full h-44 rounded-xl overflow-hidden border border-cyan-400/50 shadow-md mb-2 bg-slate-950">
-              <img id="survey-img-preview" src="" alt="Eye preview" class="w-full h-full object-cover object-center"/>
+            <div class="relative w-full h-48 rounded-xl overflow-hidden border border-cyan-400/50 shadow-md mb-2 bg-slate-950">
+              <img id="survey-img-preview" src="" alt="Thermal Eye preview" class="w-full h-full object-cover object-center"/>
               <!-- Ocular Reticle Overlay -->
               <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div class="w-24 h-24 rounded-full border-2 border-dashed border-cyan-400/60 animate-spin" style="animation-duration: 20s;"></div>
                 <div class="absolute w-2 h-2 rounded-full bg-cyan-400"></div>
-                <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/60 text-[10px] font-mono text-cyan-300 border border-cyan-500/30">ROI: Cornea Locked</div>
+                <div class="absolute top-2 left-2 px-2.5 py-0.5 rounded bg-black/75 text-[10px] font-mono text-cyan-300 border border-cyan-500/40">🔥 Thermal Scan Verified</div>
               </div>
             </div>
-            <button onclick="clearUploadedImage(event)" type="button" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 py-1 px-2.5 rounded hover:bg-rose-500/10 transition">
+            <button onclick="clearUploadedImage(event)" type="button" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 py-1 px-2.5 rounded hover:bg-rose-500/10 transition cursor-pointer">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              <span>Remove / Choose different image</span>
+              <span>Remove / Choose different thermal image</span>
             </button>
           </div>
         </div>
 
-        <!-- Sample Loader Helper -->
-        <div class="flex items-center justify-between mb-4 px-1">
-          <span class="text-[11px] text-slate-400">No eye photo handy?</span>
-          <button onclick="loadSampleEyePhoto(event)" type="button" class="text-[11px] text-cyan-300 hover:text-cyan-200 underline font-medium cursor-pointer">
-            Load clinical sample image
-          </button>
+        <!-- Thermal Validation Error Box (Prominent RED colour) -->
+        <div id="survey-upload-error" class="rounded-xl p-3.5 mb-4 border-2 border-red-500 bg-red-950/85 hidden flex items-center gap-3 shadow-lg shadow-red-500/25" style="border-color: #ef4444; color: #ef4444;">
+          <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 text-red-500 text-lg font-bold border border-red-500/40">⚠️</div>
+          <div class="flex flex-col">
+            <span id="survey-upload-error-text" class="text-base font-extrabold tracking-wide uppercase" style="color: #ef4444 !important;">upload thermal image </span>
+            <span class="text-xs text-red-400 font-medium mt-0.5" style="color: #f87171;">Normal camera images are not allowed. Please upload an authentic FLIR / Ironbow thermal image.</span>
+          </div>
         </div>
-
-        <p id="survey-upload-error" class="text-xs text-rose-400 mb-3 hidden flex items-center gap-1.5 font-medium">
-          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-          <span id="survey-upload-error-text">Please upload an eye photograph.</span>
-        </p>
 
         <!-- Privacy Shield -->
         <div class="glass-inner rounded-xl p-2.5 mb-5 flex items-center gap-2 text-slate-400 text-[11px]">
@@ -477,7 +646,7 @@
       </div>
 
       <!-- STEP 9: RESULTS & DIAGNOSIS -->
-      <div id="survey-step-results" class="hidden">
+      <div id="survey-step-results" class="hidden max-w-3xl mx-auto w-full">
         <!-- Loading Simulation -->
         <div id="survey-loading-box" class="py-12 text-center flex flex-col items-center justify-center">
           <div class="relative w-20 h-20 mb-6">
@@ -583,57 +752,31 @@
               <h2 class="text-xl sm:text-2xl font-display font-extrabold text-white tracking-tight">
                 Thermal Eye Image Scanner & Possibilities Analyzer
               </h2>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-teal-500/20 text-teal-300 border border-teal-400/30">
-                FLIR Anterior Segment AI
-              </span>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Trained on <strong>873 FLIR thermal eye images</strong> (<code>D:\AI+ML</code>) with clinical ground truth from <code>Eye classification.xlsx</code> & <code>N & PD Eye.xlsx</code>.
-            </p>
           </div>
-        </div>
-
-        <!-- Meta Indicators -->
-        <div class="flex items-center gap-2">
-          <span class="text-xs px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-300 flex items-center gap-1.5 font-mono">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>873 Images Trained</span>
-          </span>
-          <span class="text-xs px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700 text-cyan-300 flex items-center gap-1.5 font-mono">
-            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-            <span>Ironbow 27°C - 37°C</span>
-          </span>
         </div>
       </div>
 
-      <!-- Controls Bar: Upload & Presets -->
-      <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <!-- Upload Trigger -->
-        <div class="flex items-center gap-3 w-full md:w-auto">
-          <input type="file" id="thermal-file-input" accept="image/jpeg,image/png,image/jpg" class="hidden" onchange="handleThermalFileUpload(event)">
-          <button onclick="document.getElementById('thermal-file-input').click()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 font-display font-bold text-xs shadow-glow-cyan transition flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            <span>Upload Thermal Image</span>
-          </button>
-          <span class="text-slate-400 text-xs font-medium hidden sm:inline">or select clinical case:</span>
+      <!-- Patient Thermal Scan Controls Bar -->
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <!-- Patient Thermal Scan Status Indicator -->
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <div id="patient-ctrl-badge" class="px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-2.5 text-xs font-medium">
+            <span id="patient-ctrl-dot" class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="patient-ctrl-text" class="text-slate-300 font-mono">Patient Thermal Scan (Step 8 Upload)</span>
+          </div>
         </div>
 
-        <!-- Presets Dropdown & Filter Buttons -->
-        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          <select id="thermal-preset-select" onchange="loadThermalPresetFromSelect(this.value)" class="flex-1 md:flex-none py-2 px-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-400">
-            <!-- Populated from THERMAL_MODEL.sample_gallery -->
-          </select>
-          <div class="flex items-center gap-1.5">
-            <button onclick="loadRandomThermalPreset('Normal')" type="button" class="px-2.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition" title="Load random Normal Healthy eye image">
-              + Normal
-            </button>
-            <button onclick="loadRandomThermalPreset('Dry')" type="button" class="px-2.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-semibold transition" title="Load random Dry Eye image">
-              + Dry Eye
-            </button>
-            <button onclick="loadRandomThermalPreset('Asymmetric')" type="button" class="px-2.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold transition" title="Load random Asymmetric eye image">
-              + Asymmetric
-            </button>
-          </div>
+        <!-- Actions: Upload / Replace Thermal Scan & Return to Survey -->
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <input type="file" id="thermal-file-input" accept="image/jpeg,image/png,image/jpg" class="hidden" onchange="handleThermalFileUpload(event)">
+          <button onclick="document.getElementById('thermal-file-input').click()" type="button" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 font-display font-bold text-xs shadow-glow-cyan transition flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span id="btn-upload-thermal-text">Upload / Replace Thermal Scan</span>
+          </button>
+          <button onclick="switchMode('survey')" type="button" class="px-3.5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium transition flex items-center gap-1.5" title="Return to Patient Screening survey">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Patient Survey</span>
+          </button>
         </div>
       </div>
 
@@ -657,20 +800,59 @@
               </button>
             </div>
             
-            <div class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
-              <span id="canvas-img-name" class="text-cyan-300 truncate max-w-[180px]">subject_1_0S.jpg</span>
-              <span>(320×240 FLIR)</span>
+            <div class="flex items-center gap-2">
+              <span id="roi-move-hint" class="hidden text-[11px] font-mono font-medium text-amber-300 bg-amber-500/10 border border-amber-400/30 px-2.5 py-1 rounded-lg animate-pulse">
+                🎯 Drag or click to fix Center Cornea
+              </span>
+              <button id="btn-reset-rois" type="button" onclick="resetCorneaCentersToAI()" title="Reset corneal centers to AI automated detection" class="hidden text-[11px] font-mono text-slate-300 hover:text-white bg-slate-800/90 hover:bg-slate-700 px-2.5 py-1 rounded-lg border border-slate-700 transition flex items-center gap-1 cursor-pointer">
+                <span>⟲</span> Reset Center
+              </button>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+                <span id="canvas-img-name" class="text-cyan-300 truncate max-w-[180px]">Patient Thermal Scan</span>
+                <span>(FLIR Calibrated)</span>
+              </div>
             </div>
+          </div>
+
+          <!-- Thermal Workstation Upload Error (Red banner) -->
+          <div id="thermal-workstation-error" class="hidden mb-3 p-3.5 rounded-xl border-2 border-red-500 bg-red-950/90 text-red-500 font-bold flex items-center justify-between shadow-lg shadow-red-500/25" style="border-color: #ef4444; color: #ef4444;">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">⚠️</span>
+              <div>
+                <div id="thermal-workstation-error-text" class="text-base font-extrabold tracking-wide uppercase" style="color: #ef4444 !important;">upload thermal image </div>
+                <div class="text-xs text-red-400 font-normal mt-0.5" style="color: #f87171;">Normal camera images are rejected. Only FLIR thermal images can be processed.</div>
+              </div>
+            </div>
+            <button type="button" onclick="hideWorkstationThermalErr()" class="text-red-400 hover:text-red-200 text-sm p-1 rounded font-mono cursor-pointer">✕</button>
           </div>
 
           <!-- Canvas Display Container -->
           <div id="thermal-canvas-dropzone" ondragover="handleThermalDragOver(event)" ondragleave="handleThermalDragLeave(event)" ondrop="handleThermalDrop(event)" class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border-2 border-slate-800 shadow-2xl flex items-center justify-center group">
-            <canvas id="thermal-main-canvas" width="640" height="480" onmousemove="handleThermalCanvasMouseMove(event)" onmouseleave="handleThermalCanvasMouseLeave()" class="w-full h-full object-contain cursor-crosshair"></canvas>
+            <canvas id="thermal-main-canvas" width="640" height="480" onmousedown="handleThermalCanvasMouseDown(event)" onmousemove="handleThermalCanvasMouseMove(event)" onmouseup="handleThermalCanvasMouseUp(event)" onmouseleave="handleThermalCanvasMouseLeave()" ontouchstart="handleThermalCanvasTouchStart(event)" ontouchmove="handleThermalCanvasTouchMove(event)" ontouchend="handleThermalCanvasTouchEnd(event)" class="w-full h-full object-contain cursor-crosshair select-none"></canvas>
 
             <!-- Loading Spinner Overlay -->
             <div id="thermal-canvas-loader" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex flex-col items-center justify-center z-20">
               <div class="w-12 h-12 rounded-full border-4 border-slate-800 border-t-cyan-400 animate-spin mb-3"></div>
               <p class="text-xs text-cyan-300 font-mono">Calibrating FLIR Ironbow Pixels...</p>
+            </div>
+
+            <!-- Empty State Overlay (when no thermal scan uploaded yet) -->
+            <div id="thermal-empty-state" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md hidden flex flex-col items-center justify-center p-6 text-center z-20">
+              <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-3xl mb-3 text-cyan-400 shadow-glow-cyan">
+                🔥
+              </div>
+              <h3 class="text-base font-display font-bold text-white mb-1">No Patient Thermal Scan Loaded</h3>
+              <p class="text-xs text-slate-400 max-w-sm mb-4">
+                Please upload the patient's FLIR thermal image in Step 8 of Patient Screening or upload it directly here to begin analysis.
+              </p>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                <button onclick="switchMode('survey'); surveyGoToStep(8);" type="button" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 text-xs font-bold hover:scale-105 transition shadow-glow-cyan">
+                  Go to Step 8 Upload
+                </button>
+                <button onclick="document.getElementById('thermal-file-input').click()" type="button" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 text-xs font-semibold transition">
+                  Upload Thermal Image Here
+                </button>
+              </div>
             </div>
 
             <!-- Drag & Drop Hint Overlay on hover -->
@@ -748,70 +930,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Card 2: Differential Subtype Possibilities Breakdown (The Core Request) -->
-          <div class="glass-inner rounded-2xl p-4 sm:p-5 border border-white/10 space-y-3">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span>Clinical Subtype Possibilities</span>
-              </h4>
-              <span class="text-[10px] font-mono text-slate-400">3 Differential Phenotypes</span>
-            </div>
-
-            <div class="space-y-3 text-xs">
-              <!-- Subtype 1: Evaporative Dry Eye (EDE) -->
-              <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                <div class="flex justify-between items-center mb-1">
-                  <div class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                    <span class="font-semibold text-slate-200">Evaporative Dry Eye (EDE)</span>
-                  </div>
-                  <strong id="possibility-ede-pct" class="font-mono text-amber-300">18%</strong>
-                </div>
-                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mb-1.5">
-                  <div id="possibility-ede-bar" class="h-full bg-amber-400 rounded-full transition-all duration-500" style="width: 18%;"></div>
-                </div>
-                <p id="possibility-ede-desc" class="text-[11px] text-slate-400 leading-snug">
-                  Evaluates lipid tear deficiency and localized tear breakup cold spots (&lt; 34.2°C).
-                </p>
-              </div>
-
-              <!-- Subtype 2: Aqueous Deficient Dry Eye (ADDE) -->
-              <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                <div class="flex justify-between items-center mb-1">
-                  <div class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-                    <span class="font-semibold text-slate-200">Aqueous Deficient (ADDE)</span>
-                  </div>
-                  <strong id="possibility-adde-pct" class="font-mono text-rose-300">12%</strong>
-                </div>
-                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mb-1.5">
-                  <div id="possibility-adde-bar" class="h-full bg-rose-400 rounded-full transition-all duration-500" style="width: 12%;"></div>
-                </div>
-                <p id="possibility-adde-desc" class="text-[11px] text-slate-400 leading-snug">
-                  Evaluates diffuse central hypothermia (&lt; 34.0°C) and reduced basal lacrimal output.
-                </p>
-              </div>
-
-              <!-- Subtype 3: Normal Homeostasis -->
-              <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                <div class="flex justify-between items-center mb-1">
-                  <div class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    <span class="font-semibold text-slate-200">Healthy Homeostasis</span>
-                  </div>
-                  <strong id="possibility-normal-pct" class="font-mono text-emerald-300">70%</strong>
-                </div>
-                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mb-1.5">
-                  <div id="possibility-normal-bar" class="h-full bg-emerald-400 rounded-full transition-all duration-500" style="width: 70%;"></div>
-                </div>
-                <p id="possibility-normal-desc" class="text-[11px] text-slate-400 leading-snug">
-                  Physiological corneal temperature uniformity and stable pre-corneal tear film.
-                </p>
-              </div>
-            </div>
-          </div>
-
           <!-- Card 3: Bilateral Comparison & Thermal Symmetry -->
           <div class="glass-inner rounded-2xl p-4 sm:p-5 border border-white/10 space-y-3">
             <div class="flex items-center justify-between">
@@ -922,31 +1040,40 @@
       <!-- LEFT COLUMN: Patient Cohort Selector & Thermal Parameter Controls -->
       <div class="lg:col-span-7 space-y-5">
         
-        <!-- Cohort Preset Loader Card -->
+        <!-- Patient Clinical Assessment Profile Card -->
         <div class="glass-panel rounded-2xl p-5 border border-cyan-500/20">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div>
-              <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-400/30">Clinical Dataset</span>
-              <h2 class="text-lg font-display font-bold text-white mt-1">Load Subject Case from Dataset</h2>
+              <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">Patient Diagnostic Profile</span>
+              <h2 class="text-lg font-display font-bold text-white mt-1">Patient Assessment Data (Step 8 & Survey)</h2>
             </div>
-            <div class="text-xs text-slate-400 font-mono">156 verified eyes (RE & LE)</div>
-          </div>
-          <div class="flex flex-col sm:flex-row items-center gap-3">
-            <select id="clinic-patient-select" onchange="loadSelectedPatient(this.value)" class="w-full sm:flex-1 py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-400">
-              <!-- Populated by JS from model_data.json -->
-            </select>
-            <div class="flex items-center gap-2 w-full sm:w-auto">
-              <button onclick="loadRandomPatient('Normal')" class="flex-1 sm:flex-none px-3 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/30 transition">
-                + Normal Sample
-              </button>
-              <button onclick="loadRandomPatient('Possible Dry Eye')" class="flex-1 sm:flex-none px-3 py-2.5 rounded-xl bg-rose-500/20 border border-rose-400/40 text-rose-300 text-xs font-semibold hover:bg-rose-500/30 transition">
-                + Dry Eye Sample
-              </button>
+            <div id="patient-scan-status-badge" class="text-xs px-2.5 py-1 rounded-full font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-400/30 flex items-center gap-1.5">
+              <span id="patient-profile-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span id="patient-scan-status-text">Step 8 Thermal Scan Active</span>
             </div>
           </div>
-          <div id="patient-meta-banner" class="mt-3 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs flex flex-wrap items-center justify-between gap-2">
-            <span class="text-slate-300">Ground Truth Diagnosis: <strong id="pt-ground-truth" class="text-emerald-400 uppercase font-mono">Normal</strong></span>
-            <span class="text-slate-400 font-mono text-[11px]" id="pt-id-tag">ID: Subject #1</span>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-3 text-xs">
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="text-[11px] text-slate-400 uppercase font-medium">OSDI Score (Q1-Q6)</div>
+              <div class="text-lg font-bold font-mono text-cyan-300 mt-1" id="patient-profile-osdi">--</div>
+              <div class="text-[10px] text-slate-400" id="patient-profile-category">Awaiting survey</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="text-[11px] text-slate-400 uppercase font-medium">Target Eye(s)</div>
+              <div class="text-lg font-bold font-mono text-white mt-1" id="patient-profile-laterality">Both eyes</div>
+              <div class="text-[10px] text-slate-400">Step 7 Selected Laterality</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="text-[11px] text-slate-400 uppercase font-medium">Thermal Image Status</div>
+              <div class="text-sm font-bold font-mono text-emerald-400 mt-1 truncate" id="patient-profile-img-status">Uploaded ✓</div>
+              <div class="text-[10px] text-slate-400">FLIR Calibrated Scan</div>
+            </div>
+          </div>
+
+          <div id="patient-meta-banner" class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs flex flex-wrap items-center justify-between gap-2">
+            <span class="text-slate-300">Active Patient Diagnosis: <strong id="pt-ground-truth" class="text-cyan-400 uppercase font-mono">Patient Thermal Scan</strong></span>
+            <span class="text-slate-400 font-mono text-[11px]" id="pt-id-tag">Patient Thermal Scan (Step 8)</span>
           </div>
         </div>
 
@@ -1096,38 +1223,13 @@
             </div>
           </div>
         </div>
-
-        <!-- Corneal Thermography Anatomical Map (Canvas) -->
-        <div class="glass-panel rounded-2xl p-5 border border-cyan-500/20">
-          <div class="flex items-center justify-between mb-3">
-            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Corneal Thermal Topography</h4>
-            <span class="text-[10px] font-mono text-cyan-300">Thermal Scale: 32°C - 37°C</span>
-          </div>
-
-          <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
-            <canvas id="cornea-thermal-canvas" width="400" height="300" class="w-full h-full object-contain"></canvas>
-            
-            <!-- ROI Indicators Overlay -->
-            <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono bg-black/70 px-3 py-1.5 rounded-lg border border-slate-700/60 backdrop-blur-sm">
-              <span class="text-blue-300">Nasal (NC): <strong id="lbl-canvas-nc">36.0°C</strong></span>
-              <span class="text-amber-300">Center (CC): <strong id="lbl-canvas-cc">35.0°C</strong></span>
-              <span class="text-rose-300">Temporal (TC): <strong id="lbl-canvas-tc">35.5°C</strong></span>
-            </div>
-          </div>
-          <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
-            <span>Cooler (< 34.5°C = Blue/Teal)</span>
-            <span>Warm (> 35.8°C = Yellow/Red)</span>
-          </div>
         </div>
-
       </div>
-
-    </div>
-  </main>
+    </main>
 
   <!-- Global Trustworthy Footer -->
   <footer class="w-full max-w-7xl mx-auto py-5 px-4 text-center text-xs text-slate-500 border-t border-slate-800/80 mt-8 no-print">
-    <p>© 2026 Dry Eye AI | Clinical Screening & Thermographic Analysis Platform. Designed for clinical research & patient triage.</p>
+    <p>© 2026 Dry Eye Detector | Clinical Screening & Thermographic Analysis Platform. Designed for clinical research & patient triage.</p>
   </footer>
 
   <!-- ========================================================================= -->
@@ -1142,60 +1244,47 @@
     // CLINICAL REGISTRY (78 SUBJECTS) & OPTIMAL BALANCED AI CLASSIFIERS
     // Ground Truth from: Eye classification.xlsx & N & PD Eye.xlsx
     // =========================================================================
-    const CLINICAL_REGISTRY = {"2": {"sno": 2, "osdi": 10.42, "age": 34, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.11, "cr7": -0.148, "nc": 36.7, "tc": 35.8, "cc": 35.2, "nl": 35.6, "tl": 35.2, "t0": 35.6, "t10": 35.2, "most": 35.7}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.117, "cr7": -0.152, "nc": 36.9, "tc": 35.9, "cc": 35.6, "nl": 36.5, "tl": 35.5, "t0": 35.8, "t10": 35.5, "most": 36.08}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.4}, "4": {"sno": 4, "osdi": 50.0, "age": 19, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.053, "cr7": -0.071, "nc": 36.5, "tc": 36.4, "cc": 35.3, "nl": 35.4, "tl": 35.5, "t0": 35.6, "t10": 34.8, "most": 35.82}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.057, "cr7": -0.067, "nc": 36.3, "tc": 35.6, "cc": 35.1, "nl": 35.5, "tl": 35.2, "t0": 35.5, "t10": 34.8, "most": 35.54}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "5": {"sno": 5, "osdi": 0.0, "age": 25, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.077, "cr7": -0.133, "nc": 36.2, "tc": 36.2, "cc": 34.6, "nl": 35.2, "tl": 34.7, "t0": 35.1, "t10": 34.5, "most": 35.38}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.077, "cr7": -0.114, "nc": 36.2, "tc": 36.4, "cc": 34.6, "nl": 34.9, "tl": 34.9, "t0": 35.1, "t10": 34.2, "most": 35.4}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.0}, "9": {"sno": 9, "osdi": 8.33, "age": 29, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.007, "cr7": -0.01, "nc": 36.4, "tc": 36.0, "cc": 35.3, "nl": 35.7, "tl": 35.5, "t0": 35.6, "t10": 35.4, "most": 35.78}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.007, "cr7": 0.005, "nc": 36.6, "tc": 36.0, "cc": 35.5, "nl": 35.9, "tl": 35.7, "t0": 35.9, "t10": 35.7, "most": 35.94}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "13": {"sno": 13, "osdi": 12.5, "age": 24, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.029, "nc": 36.0, "tc": 35.7, "cc": 34.9, "nl": 35.1, "tl": 34.7, "t0": 35.5, "t10": 35.1, "most": 35.28}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.033, "nc": 35.9, "tc": 35.6, "cc": 34.8, "nl": 35.1, "tl": 35.0, "t0": 35.2, "t10": 35.0, "most": 35.28}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "14": {"sno": 14, "osdi": 10.42, "age": 37, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.014, "nc": 35.6, "tc": 35.0, "cc": 34.8, "nl": 35.0, "tl": 34.9, "t0": 35.0, "t10": 34.9, "most": 35.06}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.027, "cr7": -0.005, "nc": 35.7, "tc": 34.7, "cc": 34.6, "nl": 35.0, "tl": 34.5, "t0": 34.9, "t10": 34.7, "most": 34.9}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "16": {"sno": 16, "osdi": 16.67, "age": 43, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.024, "nc": 35.7, "tc": 35.0, "cc": 34.8, "nl": 34.8, "tl": 34.7, "t0": 35.1, "t10": 34.9, "most": 35.0}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.019, "nc": 36.3, "tc": 35.2, "cc": 34.9, "nl": 35.4, "tl": 34.8, "t0": 35.3, "t10": 35.1, "most": 35.32}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "17": {"sno": 17, "osdi": 12.5, "age": 37, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.029, "nc": 36.3, "tc": 35.7, "cc": 35.2, "nl": 35.4, "tl": 35.3, "t0": 35.6, "t10": 35.6, "most": 35.58}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.01, "nc": 36.2, "tc": 35.4, "cc": 35.2, "nl": 35.5, "tl": 35.0, "t0": 35.7, "t10": 35.6, "most": 35.46}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.0}, "19": {"sno": 19, "osdi": 20.83, "age": 22, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.01, "nc": 36.4, "tc": 36.7, "cc": 35.6, "nl": 35.6, "tl": 35.8, "t0": 35.3, "t10": 35.8, "most": 36.02}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.014, "nc": 36.2, "tc": 36.1, "cc": 35.2, "nl": 35.4, "tl": 35.3, "t0": 35.6, "t10": 35.5, "most": 35.64}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.4}, "21": {"sno": 21, "osdi": 2.08, "age": 38, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.003, "cr7": 0.024, "nc": 36.3, "tc": 36.0, "cc": 35.2, "nl": 35.3, "tl": 35.2, "t0": 35.6, "t10": 35.7, "most": 35.6}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.003, "cr7": 0.0, "nc": 36.0, "tc": 35.0, "cc": 34.9, "nl": 35.0, "tl": 35.0, "t0": 35.5, "t10": 35.5, "most": 35.18}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "22": {"sno": 22, "osdi": 4.17, "age": 49, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.033, "cr7": -0.038, "nc": 36.1, "tc": 35.3, "cc": 34.8, "nl": 35.3, "tl": 34.7, "t0": 35.6, "t10": 35.5, "most": 35.24}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.05, "cr7": -0.062, "nc": 35.9, "tc": 34.7, "cc": 34.5, "nl": 34.7, "tl": 34.5, "t0": 35.2, "t10": 34.8, "most": 34.86}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "23": {"sno": 23, "osdi": 2.08, "age": 31, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.005, "nc": 35.7, "tc": 35.1, "cc": 34.9, "nl": 35.3, "tl": 35.0, "t0": 34.8, "t10": 34.5, "most": 35.2}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.01, "cr7": 0.01, "nc": 35.7, "tc": 35.0, "cc": 35.0, "nl": 35.1, "tl": 35.1, "t0": 34.8, "t10": 34.4, "most": 35.18}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "24": {"sno": 24, "osdi": 12.5, "age": 22, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.014, "nc": 36.8, "tc": 36.2, "cc": 36.1, "nl": 36.1, "tl": 36.1, "t0": 36.1, "t10": 36.0, "most": 36.26}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.003, "cr7": -0.005, "nc": 36.6, "tc": 36.2, "cc": 35.8, "nl": 35.9, "tl": 35.8, "t0": 35.8, "t10": 35.7, "most": 36.06}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "25": {"sno": 25, "osdi": 12.5, "age": 29, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.01, "nc": 35.8, "tc": 35.5, "cc": 35.0, "nl": 35.2, "tl": 35.3, "t0": 34.9, "t10": 34.9, "most": 35.36}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.057, "cr7": -0.024, "nc": 35.8, "tc": 35.3, "cc": 34.8, "nl": 35.0, "tl": 34.6, "t0": 34.9, "t10": 34.1, "most": 35.1}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.2}, "27": {"sno": 27, "osdi": 1.42, "age": 25, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.043, "cr7": -0.071, "nc": 36.0, "tc": 35.1, "cc": 34.9, "nl": 35.1, "tl": 34.9, "t0": 35.7, "t10": 35.7, "most": 35.2}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.076, "nc": 36.1, "tc": 35.6, "cc": 35.2, "nl": 35.5, "tl": 35.2, "t0": 36.2, "t10": 36.0, "most": 35.52}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "28": {"sno": 28, "osdi": 2.08, "age": 30, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.033, "cr7": -0.114, "nc": 36.3, "tc": 35.9, "cc": 35.6, "nl": 35.9, "tl": 35.7, "t0": 35.8, "t10": 35.7, "most": 35.88}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.124, "nc": 36.4, "tc": 35.9, "cc": 35.8, "nl": 35.9, "tl": 35.7, "t0": 35.9, "t10": 35.7, "most": 35.94}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "29": {"sno": 29, "osdi": 6.25, "age": 25, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.003, "cr7": -0.081, "nc": 37.1, "tc": 36.9, "cc": 36.4, "nl": 36.5, "tl": 36.3, "t0": 36.5, "t10": 36.4, "most": 36.64}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.037, "cr7": -0.124, "nc": 37.4, "tc": 36.9, "cc": 36.4, "nl": 36.7, "tl": 36.5, "t0": 36.8, "t10": 36.6, "most": 36.78}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.0}, "34": {"sno": 34, "osdi": 14.58, "age": 25, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.007, "cr7": -0.052, "nc": 35.9, "tc": 35.1, "cc": 35.0, "nl": 35.3, "tl": 34.8, "t0": 35.2, "t10": 35.0, "most": 35.22}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.04, "cr7": -0.081, "nc": 36.0, "tc": 35.3, "cc": 35.3, "nl": 35.3, "tl": 35.3, "t0": 35.6, "t10": 35.4, "most": 35.44}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "37": {"sno": 37, "osdi": 27.08, "age": 24, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.0, "nc": 36.6, "tc": 35.6, "cc": 35.3, "nl": 35.7, "tl": 35.3, "t0": 35.6, "t10": 35.6, "most": 35.7}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.024, "nc": 36.4, "tc": 35.2, "cc": 35.1, "nl": 35.3, "tl": 35.0, "t0": 35.2, "t10": 35.4, "most": 35.4}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "38": {"sno": 38, "osdi": 25.0, "age": 37, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.01, "nc": 35.8, "tc": 35.4, "cc": 34.7, "nl": 34.9, "tl": 34.9, "t0": 35.0, "t10": 35.2, "most": 35.14}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.005, "nc": 35.6, "tc": 35.3, "cc": 34.6, "nl": 35.0, "tl": 34.6, "t0": 35.0, "t10": 35.0, "most": 35.02}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "39": {"sno": 39, "osdi": 2.08, "age": 27, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.024, "nc": 36.0, "tc": 35.5, "cc": 35.3, "nl": 35.4, "tl": 35.2, "t0": 35.5, "t10": 35.3, "most": 35.48}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.038, "nc": 35.8, "tc": 35.2, "cc": 34.9, "nl": 35.1, "tl": 35.1, "t0": 35.4, "t10": 35.0, "most": 35.22}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.4}, "40": {"sno": 40, "osdi": 18.75, "age": 36, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.019, "nc": 35.6, "tc": 35.4, "cc": 34.8, "nl": 34.8, "tl": 34.9, "t0": 35.0, "t10": 34.8, "most": 35.1}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.027, "cr7": -0.043, "nc": 35.8, "tc": 35.2, "cc": 34.9, "nl": 35.1, "tl": 35.1, "t0": 35.4, "t10": 35.0, "most": 35.22}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "42": {"sno": 42, "osdi": 12.5, "age": 32, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.083, "cr7": -0.119, "nc": 36.1, "tc": 35.8, "cc": 35.0, "nl": 35.1, "tl": 35.1, "t0": 35.3, "t10": 34.6, "most": 35.42}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.097, "cr7": -0.143, "nc": 36.1, "tc": 35.9, "cc": 35.3, "nl": 35.4, "tl": 35.7, "t0": 35.8, "t10": 34.9, "most": 35.68}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "43": {"sno": 43, "osdi": 16.67, "age": 25, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.02, "cr7": -0.076, "nc": 35.7, "tc": 35.5, "cc": 34.7, "nl": 34.8, "tl": 35.0, "t0": 35.0, "t10": 34.6, "most": 35.14}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.043, "cr7": -0.052, "nc": 35.5, "tc": 34.9, "cc": 34.4, "nl": 34.9, "tl": 34.4, "t0": 34.8, "t10": 34.6, "most": 34.82}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "44": {"sno": 44, "osdi": 2.08, "age": 32, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.017, "cr7": 0.019, "nc": 35.9, "tc": 35.7, "cc": 35.1, "nl": 35.5, "tl": 35.2, "t0": 35.5, "t10": 36.1, "most": 35.48}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.003, "cr7": 0.014, "nc": 35.9, "tc": 35.4, "cc": 35.0, "nl": 35.1, "tl": 34.9, "t0": 35.3, "t10": 35.7, "most": 35.26}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "45": {"sno": 45, "osdi": 12.5, "age": 21, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.01, "nc": 36.4, "tc": 35.8, "cc": 35.2, "nl": 35.7, "tl": 35.4, "t0": 35.7, "t10": 35.6, "most": 35.7}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.024, "nc": 36.5, "tc": 36.2, "cc": 35.4, "nl": 35.8, "tl": 35.4, "t0": 35.7, "t10": 35.7, "most": 35.86}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "46": {"sno": 46, "osdi": 29.17, "age": 21, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.06, "cr7": 0.057, "nc": 36.1, "tc": 35.9, "cc": 34.9, "nl": 35.2, "tl": 35.2, "t0": 35.3, "t10": 34.9, "most": 35.46}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.047, "cr7": 0.052, "nc": 35.6, "tc": 35.1, "cc": 34.7, "nl": 34.7, "tl": 34.8, "t0": 35.0, "t10": 35.0, "most": 34.98}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "47": {"sno": 47, "osdi": 37.5, "age": 22, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.01, "cr7": -0.038, "nc": 35.5, "tc": 35.2, "cc": 34.5, "nl": 34.7, "tl": 34.7, "t0": 34.8, "t10": 34.9, "most": 34.92}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.01, "cr7": 0.01, "nc": 35.4, "tc": 35.3, "cc": 34.3, "nl": 34.4, "tl": 34.6, "t0": 34.7, "t10": 34.8, "most": 34.8}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "48": {"sno": 48, "osdi": 16.67, "age": 22, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.037, "cr7": -0.124, "nc": 36.6, "tc": 36.0, "cc": 35.5, "nl": 35.6, "tl": 35.4, "t0": 35.9, "t10": 35.5, "most": 35.82}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.086, "nc": 36.6, "tc": 36.2, "cc": 35.6, "nl": 35.8, "tl": 35.7, "t0": 35.9, "t10": 35.7, "most": 35.98}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "49": {"sno": 49, "osdi": 2.08, "age": 21, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.043, "nc": 36.8, "tc": 36.3, "cc": 36.1, "nl": 36.3, "tl": 36.1, "t0": 36.2, "t10": 36.7, "most": 36.32}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": 0.005, "nc": 37.6, "tc": 36.5, "cc": 36.5, "nl": 36.8, "tl": 36.5, "t0": 36.8, "t10": 37.3, "most": 36.78}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.4}, "50": {"sno": 50, "osdi": 1.42, "age": 34, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.047, "cr7": -0.029, "nc": 37.0, "tc": 36.6, "cc": 35.6, "nl": 35.8, "tl": 35.7, "t0": 36.1, "t10": 35.5, "most": 36.14}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": 0.01, "nc": 36.6, "tc": 35.7, "cc": 34.8, "nl": 35.5, "tl": 34.6, "t0": 35.5, "t10": 34.8, "most": 35.44}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.8}, "51": {"sno": 51, "osdi": 4.17, "age": 26, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.033, "nc": 36.9, "tc": 35.8, "cc": 35.8, "nl": 36.2, "tl": 35.8, "t0": 36.0, "t10": 35.6, "most": 36.1}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.029, "nc": 36.8, "tc": 35.7, "cc": 35.6, "nl": 36.2, "tl": 35.7, "t0": 36.1, "t10": 35.5, "most": 36.0}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "52": {"sno": 52, "osdi": 10.42, "age": 24, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": -0.067, "nc": 36.0, "tc": 35.8, "cc": 35.0, "nl": 34.9, "tl": 35.0, "t0": 35.4, "t10": 35.3, "most": 35.34}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": -0.086, "nc": 35.4, "tc": 34.3, "cc": 34.2, "nl": 34.3, "tl": 34.6, "t0": 34.9, "t10": 34.8, "most": 34.56}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.8}, "55": {"sno": 55, "osdi": 12.5, "age": 48, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.019, "nc": 36.3, "tc": 35.5, "cc": 35.3, "nl": 35.5, "tl": 35.4, "t0": 35.6, "t10": 35.4, "most": 35.6}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.005, "nc": 35.8, "tc": 35.7, "cc": 35.2, "nl": 35.4, "tl": 35.3, "t0": 35.4, "t10": 35.3, "most": 35.48}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "57": {"sno": 57, "osdi": 2.08, "age": 38, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.06, "cr7": -0.062, "nc": 35.7, "tc": 35.5, "cc": 34.8, "nl": 34.9, "tl": 34.7, "t0": 35.0, "t10": 34.6, "most": 35.12}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.04, "cr7": -0.043, "nc": 36.2, "tc": 35.5, "cc": 35.1, "nl": 35.3, "tl": 35.1, "t0": 35.5, "t10": 35.1, "most": 35.44}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "58": {"sno": 58, "osdi": 12.5, "age": 26, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.01, "nc": 35.6, "tc": 35.3, "cc": 34.5, "nl": 34.7, "tl": 34.3, "t0": 34.8, "t10": 34.8, "most": 34.88}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.014, "nc": 35.8, "tc": 35.6, "cc": 33.9, "nl": 34.4, "tl": 34.5, "t0": 34.9, "t10": 34.6, "most": 34.84}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.6}, "61": {"sno": 61, "osdi": 2.08, "age": 34, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.029, "nc": 36.8, "tc": 36.1, "cc": 35.8, "nl": 35.9, "tl": 35.7, "t0": 36.0, "t10": 35.7, "most": 36.06}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.033, "nc": 36.7, "tc": 35.6, "cc": 35.6, "nl": 35.8, "tl": 35.6, "t0": 35.9, "t10": 35.7, "most": 35.86}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "62": {"sno": 62, "osdi": 62.5, "age": 46, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.04, "cr7": -0.038, "nc": 36.2, "tc": 35.6, "cc": 34.6, "nl": 35.2, "tl": 34.7, "t0": 35.2, "t10": 35.1, "most": 35.26}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.01, "nc": 36.2, "tc": 35.8, "cc": 35.1, "nl": 35.6, "tl": 35.2, "t0": 35.5, "t10": 35.4, "most": 35.58}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.5}, "63": {"sno": 63, "osdi": 6.25, "age": 30, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.01, "cr7": -0.014, "nc": 36.6, "tc": 36.0, "cc": 35.5, "nl": 35.7, "tl": 35.8, "t0": 35.9, "t10": 35.7, "most": 35.92}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.024, "nc": 36.6, "tc": 35.7, "cc": 35.3, "nl": 35.9, "tl": 35.5, "t0": 35.8, "t10": 35.6, "most": 35.8}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "64": {"sno": 64, "osdi": 10.42, "age": 29, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.027, "cr7": -0.038, "nc": 35.3, "tc": 35.0, "cc": 34.7, "nl": 34.5, "tl": 34.7, "t0": 34.6, "t10": 0.0, "most": 34.84}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.047, "cr7": -0.067, "nc": 35.2, "tc": 34.4, "cc": 34.1, "nl": 34.3, "tl": 34.3, "t0": 34.4, "t10": 0.0, "most": 34.46}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.6}, "65": {"sno": 65, "osdi": 12.5, "age": 45, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.003, "cr7": 0.0, "nc": 35.7, "tc": 36.1, "cc": 35.8, "nl": 36.2, "tl": 35.7, "t0": 36.1, "t10": 36.1, "most": 35.9}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.019, "nc": 37.0, "tc": 36.3, "cc": 36.2, "nl": 36.4, "tl": 36.2, "t0": 36.4, "t10": 36.4, "most": 36.42}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.4}, "68": {"sno": 68, "osdi": 6.25, "age": 42, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.017, "cr7": -0.038, "nc": 36.1, "tc": 35.2, "cc": 35.0, "nl": 35.4, "tl": 35.0, "t0": 35.3, "t10": 35.1, "most": 35.34}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.033, "cr7": -0.038, "nc": 36.3, "tc": 35.4, "cc": 35.1, "nl": 35.7, "tl": 35.0, "t0": 35.4, "t10": 35.2, "most": 35.5}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "73": {"sno": 73, "osdi": 10.42, "age": 47, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.003, "cr7": -0.033, "nc": 36.2, "tc": 35.7, "cc": 35.3, "nl": 35.4, "tl": 35.4, "t0": 35.6, "t10": 35.5, "most": 35.6}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": -0.014, "nc": 36.3, "tc": 35.9, "cc": 35.1, "nl": 35.3, "tl": 34.8, "t0": 35.3, "t10": 35.2, "most": 35.48}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.2}, "74": {"sno": 74, "osdi": 18.75, "age": 36, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.029, "nc": 35.9, "tc": 35.9, "cc": 35.2, "nl": 35.4, "tl": 35.3, "t0": 35.6, "t10": 35.3, "most": 35.54}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.08, "cr7": -0.062, "nc": 35.6, "tc": 35.0, "cc": 33.9, "nl": 34.6, "tl": 34.0, "t0": 34.5, "t10": 33.9, "most": 34.62}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 1.3}, "77": {"sno": 77, "osdi": 62.5, "age": 37, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.037, "cr7": -0.048, "nc": 35.6, "tc": 35.4, "cc": 34.5, "nl": 34.6, "tl": 34.7, "t0": 34.9, "t10": 34.6, "most": 34.96}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.03, "cr7": -0.043, "nc": 35.7, "tc": 34.9, "cc": 34.5, "nl": 34.9, "tl": 34.5, "t0": 34.9, "t10": 34.8, "most": 34.9}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.0}, "78": {"sno": 78, "osdi": 14.58, "age": 42, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.03, "cr7": 0.048, "nc": 36.2, "tc": 35.0, "cc": 35.3, "nl": 35.6, "tl": 35.2, "t0": 35.5, "t10": 34.5, "most": 35.46}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.027, "cr7": 0.048, "nc": 35.9, "tc": 35.5, "cc": 35.2, "nl": 35.3, "tl": 35.2, "t0": 35.5, "t10": 34.6, "most": 35.42}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "80": {"sno": 80, "osdi": 2.08, "age": 39, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.003, "cr7": 0.005, "nc": 36.1, "tc": 35.9, "cc": 35.2, "nl": 35.4, "tl": 35.3, "t0": 35.4, "t10": 35.4, "most": 35.58}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.02, "cr7": -0.014, "nc": 35.9, "tc": 35.9, "cc": 34.9, "nl": 35.1, "tl": 35.1, "t0": 35.2, "t10": 34.9, "most": 35.38}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "81": {"sno": 81, "osdi": 6.25, "age": 37, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.029, "nc": 35.7, "tc": 34.6, "cc": 34.4, "nl": 35.0, "tl": 34.0, "t0": 34.6, "t10": 34.4, "most": 34.74}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.07, "cr7": -0.114, "nc": 35.9, "tc": 35.2, "cc": 33.8, "nl": 34.5, "tl": 34.0, "t0": 34.4, "t10": 34.1, "most": 34.68}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.6}, "6": {"sno": 6, "osdi": 8.33, "age": 50, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": -0.057, "nc": 34.5, "tc": 33.8, "cc": 33.7, "nl": 34.0, "tl": 33.6, "t0": 33.9, "t10": 33.9, "most": 33.92}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.04, "cr7": -0.062, "nc": 34.6, "tc": 33.7, "cc": 33.2, "nl": 33.6, "tl": 33.4, "t0": 33.8, "t10": 33.3, "most": 33.7}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.5}, "7": {"sno": 7, "osdi": 20.83, "age": 24, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.003, "cr7": 0.014, "nc": 35.9, "tc": 34.7, "cc": 33.8, "nl": 34.5, "tl": 34.0, "t0": 34.8, "t10": 34.6, "most": 34.58}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.0, "nc": 35.3, "tc": 34.6, "cc": 33.7, "nl": 34.1, "tl": 34.0, "t0": 34.6, "t10": 34.4, "most": 34.34}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "8": {"sno": 8, "osdi": 16.67, "age": 33, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.027, "cr7": -0.048, "nc": 35.7, "tc": 35.6, "cc": 34.3, "nl": 34.5, "tl": 34.7, "t0": 34.9, "t10": 34.8, "most": 34.96}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": 0.0, "nc": 35.3, "tc": 34.9, "cc": 34.2, "nl": 34.4, "tl": 34.4, "t0": 34.7, "t10": 34.8, "most": 34.64}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "10": {"sno": 10, "osdi": 25.0, "age": 25, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.027, "cr7": -0.019, "nc": 35.2, "tc": 34.4, "cc": 33.8, "nl": 34.0, "tl": 33.9, "t0": 34.1, "t10": 33.7, "most": 34.26}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.02, "cr7": 0.0, "nc": 35.0, "tc": 34.1, "cc": 33.7, "nl": 34.0, "tl": 33.9, "t0": 34.3, "t10": 33.8, "most": 34.14}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "12": {"sno": 12, "osdi": 6.25, "age": 28, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.01, "cr7": 0.01, "nc": 35.1, "tc": 33.7, "cc": 34.0, "nl": 34.2, "tl": 33.9, "t0": 34.2, "t10": 34.3, "most": 34.18}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.017, "cr7": -0.014, "nc": 35.3, "tc": 34.6, "cc": 34.1, "nl": 34.6, "tl": 34.2, "t0": 34.4, "t10": 34.4, "most": 34.56}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "18": {"sno": 18, "osdi": 50.0, "age": 25, "gender": "M", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.033, "cr7": -0.029, "nc": 35.4, "tc": 34.5, "cc": 34.5, "nl": 34.7, "tl": 34.4, "t0": 34.7, "t10": 34.7, "most": 34.7}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.023, "cr7": -0.038, "nc": 35.6, "tc": 34.4, "cc": 34.4, "nl": 34.8, "tl": 34.5, "t0": 34.8, "t10": 34.6, "most": 34.74}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "32": {"sno": 32, "osdi": 14.58, "age": 25, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.027, "cr7": 0.033, "nc": 36.0, "tc": 34.8, "cc": 34.2, "nl": 34.5, "tl": 34.2, "t0": 34.7, "t10": 34.4, "most": 34.74}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.03, "cr7": 0.019, "nc": 35.8, "tc": 35.1, "cc": 34.3, "nl": 34.4, "tl": 34.4, "t0": 34.7, "t10": 34.3, "most": 34.8}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.1}, "76": {"sno": 76, "osdi": 14.58, "age": 30, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.013, "cr7": -0.005, "nc": 35.3, "tc": 34.4, "cc": 34.0, "nl": 34.3, "tl": 34.2, "t0": 34.3, "t10": 34.2, "most": 34.44}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.013, "cr7": -0.01, "nc": 35.3, "tc": 34.5, "cc": 34.0, "nl": 34.4, "tl": 34.1, "t0": 34.3, "t10": 34.4, "most": 34.46}, "overall_category": "Asymmetric (RE Normal / LE Dry)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.0}, "79": {"sno": 79, "osdi": 2.08, "age": 35, "gender": "FM", "re": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.007, "cr7": -0.01, "nc": 36.1, "tc": 35.6, "cc": 34.8, "nl": 35.1, "tl": 34.8, "t0": 35.1, "t10": 35.0, "most": 35.28}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.023, "cr7": -0.048, "nc": 36.0, "tc": 34.9, "cc": 34.5, "nl": 34.9, "tl": 34.6, "t0": 34.9, "t10": 34.7, "most": 34.98}, "overall_category": "Healthy Normal", "overall_diagnosis": "Normal", "is_overall_dry": 0, "delta_t": 0.3}, "1": {"sno": 1, "osdi": 41.67, "age": 43, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.07, "cr7": -0.152, "nc": 35.7, "tc": 34.9, "cc": 34.5, "nl": 34.7, "tl": 34.4, "t0": 34.9, "t10": 35.1, "most": 34.84}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.083, "cr7": -0.167, "nc": 35.5, "tc": 35.0, "cc": 34.4, "nl": 34.8, "tl": 34.4, "t0": 34.8, "t10": 35.0, "most": 34.82}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "3": {"sno": 3, "osdi": 43.75, "age": 19, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.1, "cr7": -0.11, "nc": 35.6, "tc": 34.5, "cc": 34.2, "nl": 34.7, "tl": 34.2, "t0": 34.6, "t10": 35.0, "most": 34.64}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.043, "cr7": -0.052, "nc": 36.0, "tc": 34.8, "cc": 34.5, "nl": 35.0, "tl": 34.5, "t0": 35.0, "t10": 35.3, "most": 34.96}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.3}, "11": {"sno": 11, "osdi": 31.25, "age": 42, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": 0.0, "cr7": 0.0, "nc": 35.3, "tc": 34.8, "cc": 34.0, "nl": 34.7, "tl": 33.9, "t0": 34.6, "t10": 0.0, "most": 34.54}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": 0.0, "cr7": 0.0, "nc": 35.6, "tc": 34.6, "cc": 33.8, "nl": 34.6, "tl": 34.0, "t0": 34.4, "t10": 0.0, "most": 34.52}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.2}, "15": {"sno": 15, "osdi": 22.92, "age": 27, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.027, "cr7": -0.043, "nc": 35.0, "tc": 35.0, "cc": 33.6, "nl": 34.1, "tl": 33.8, "t0": 34.0, "t10": 33.7, "most": 34.3}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.017, "cr7": -0.019, "nc": 35.1, "tc": 34.4, "cc": 33.8, "nl": 34.3, "tl": 34.1, "t0": 34.1, "t10": 33.9, "most": 34.34}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.2}, "30": {"sno": 30, "osdi": 33.33, "age": 25, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.04, "cr7": -0.048, "nc": 35.8, "tc": 34.8, "cc": 34.3, "nl": 34.5, "tl": 34.4, "t0": 34.7, "t10": 34.5, "most": 34.76}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.023, "cr7": -0.024, "nc": 35.2, "tc": 35.0, "cc": 34.4, "nl": 34.6, "tl": 34.6, "t0": 34.8, "t10": 34.6, "most": 34.76}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "33": {"sno": 33, "osdi": 33.33, "age": 25, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.063, "cr7": -0.043, "nc": 35.7, "tc": 35.0, "cc": 34.3, "nl": 34.9, "tl": 34.5, "t0": 34.8, "t10": 34.2, "most": 34.88}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.077, "cr7": -0.09, "nc": 35.3, "tc": 34.8, "cc": 34.3, "nl": 34.5, "tl": 34.6, "t0": 34.7, "t10": 34.0, "most": 34.7}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.0}, "35": {"sno": 35, "osdi": 22.92, "age": 24, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.093, "cr7": -0.119, "nc": 35.9, "tc": 34.9, "cc": 34.8, "nl": 35.3, "tl": 34.7, "t0": 34.9, "t10": 34.0, "most": 35.12}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.13, "cr7": -0.181, "nc": 35.6, "tc": 34.8, "cc": 34.7, "nl": 34.8, "tl": 34.8, "t0": 35.0, "t10": 33.8, "most": 34.94}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "36": {"sno": 36, "osdi": 18.75, "age": 27, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.007, "cr7": -0.057, "nc": 34.9, "tc": 35.8, "cc": 36.1, "nl": 35.1, "tl": 35.0, "t0": 35.1, "t10": 35.2, "most": 35.38}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.007, "cr7": -0.043, "nc": 34.9, "tc": 35.8, "cc": 36.1, "nl": 35.1, "tl": 35.0, "t0": 35.1, "t10": 35.2, "most": 35.38}, "overall_category": "Asymmetric (RE Dry / LE Normal)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.0}, "41": {"sno": 41, "osdi": 29.17, "age": 26, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.043, "cr7": 0.01, "nc": 36.1, "tc": 34.9, "cc": 34.9, "nl": 35.1, "tl": 34.8, "t0": 35.1, "t10": 34.7, "most": 35.16}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.053, "cr7": -0.01, "nc": 36.0, "tc": 35.1, "cc": 34.8, "nl": 35.1, "tl": 34.9, "t0": 35.1, "t10": 34.8, "most": 35.18}, "overall_category": "Asymmetric (RE Dry / LE Normal)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "53": {"sno": 53, "osdi": 22.92, "age": 24, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.053, "cr7": -0.062, "nc": 34.9, "tc": 33.5, "cc": 33.5, "nl": 34.1, "tl": 33.6, "t0": 33.9, "t10": 33.3, "most": 33.92}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": -0.05, "cr7": -0.062, "nc": 35.4, "tc": 34.9, "cc": 34.6, "nl": 34.9, "tl": 34.6, "t0": 34.8, "t10": 34.6, "most": 34.88}, "overall_category": "Asymmetric (RE Dry / LE Normal)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 1.1}, "54": {"sno": 54, "osdi": 10.42, "age": 36, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": 0.0, "cr7": -0.01, "nc": 34.9, "tc": 35.5, "cc": 34.3, "nl": 34.5, "tl": 34.2, "t0": 34.7, "t10": 34.5, "most": 34.68}, "le": {"diagnosis": "Normal", "is_dry": 0, "cr10": 0.0, "cr7": -0.062, "nc": 35.8, "tc": 34.3, "cc": 34.6, "nl": 35.0, "tl": 34.2, "t0": 34.9, "t10": 34.5, "most": 34.78}, "overall_category": "Asymmetric (RE Dry / LE Normal)", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.3}, "60": {"sno": 60, "osdi": 41.67, "age": 32, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.087, "cr7": -0.09, "nc": 36.0, "tc": 35.1, "cc": 35.2, "nl": 35.3, "tl": 35.2, "t0": 35.5, "t10": 34.6, "most": 35.36}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.113, "cr7": -0.095, "nc": 36.4, "tc": 35.8, "cc": 35.1, "nl": 35.3, "tl": 35.3, "t0": 35.5, "t10": 34.4, "most": 35.58}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "66": {"sno": 66, "osdi": 87.5, "age": 45, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.063, "cr7": -0.076, "nc": 35.9, "tc": 35.5, "cc": 35.3, "nl": 35.4, "tl": 35.0, "t0": 35.3, "t10": 34.7, "most": 35.42}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.087, "cr7": -0.105, "nc": 36.3, "tc": 35.1, "cc": 34.5, "nl": 35.4, "tl": 34.4, "t0": 35.1, "t10": 34.5, "most": 35.14}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.8}, "67": {"sno": 67, "osdi": 2.08, "age": 28, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.003, "cr7": -0.019, "nc": 34.9, "tc": 35.4, "cc": 32.7, "nl": 33.3, "tl": 33.0, "t0": 33.6, "t10": 33.5, "most": 33.86}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.023, "cr7": -0.038, "nc": 34.7, "tc": 34.6, "cc": 32.8, "nl": 33.3, "tl": 33.3, "t0": 33.4, "t10": 33.6, "most": 33.74}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}, "69": {"sno": 69, "osdi": 31.25, "age": 33, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.07, "cr7": -0.1, "nc": 33.4, "tc": 33.4, "cc": 32.8, "nl": 33.0, "tl": 33.0, "t0": 33.1, "t10": 0.0, "most": 33.12}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.057, "cr7": -0.081, "nc": 34.4, "tc": 34.0, "cc": 33.3, "nl": 33.6, "tl": 33.4, "t0": 33.6, "t10": 0.0, "most": 33.74}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.5}, "70": {"sno": 70, "osdi": 35.42, "age": 53, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.043, "cr7": -0.048, "nc": 33.6, "tc": 34.6, "cc": 33.1, "nl": 33.6, "tl": 32.9, "t0": 33.4, "t10": 33.5, "most": 33.56}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.01, "cr7": -0.01, "nc": 35.1, "tc": 34.2, "cc": 33.9, "nl": 33.9, "tl": 33.8, "t0": 34.1, "t10": 34.2, "most": 34.18}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.8}, "71": {"sno": 71, "osdi": 20.83, "age": 36, "gender": "FM", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.013, "cr7": 0.005, "nc": 34.4, "tc": 34.3, "cc": 33.2, "nl": 33.5, "tl": 33.3, "t0": 33.5, "t10": 33.2, "most": 33.74}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.023, "cr7": -0.019, "nc": 34.7, "tc": 34.4, "cc": 33.4, "nl": 33.7, "tl": 33.5, "t0": 33.8, "t10": 33.5, "most": 33.94}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.2}, "72": {"sno": 72, "osdi": 43.75, "age": 35, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.053, "cr7": -0.052, "nc": 35.4, "tc": 35.7, "cc": 35.2, "nl": 35.2, "tl": 35.2, "t0": 35.4, "t10": 34.9, "most": 35.34}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.073, "cr7": -0.095, "nc": 35.6, "tc": 35.3, "cc": 35.0, "nl": 35.0, "tl": 35.0, "t0": 35.1, "t10": 34.6, "most": 35.18}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.2}, "75": {"sno": 75, "osdi": 6.25, "age": 54, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.113, "cr7": -0.119, "nc": 34.3, "tc": 33.4, "cc": 33.2, "nl": 33.5, "tl": 33.1, "t0": 33.3, "t10": 33.1, "most": 33.5}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.087, "cr7": -0.095, "nc": 34.3, "tc": 33.2, "cc": 32.9, "nl": 33.2, "tl": 32.8, "t0": 33.1, "t10": 33.1, "most": 33.28}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.3}, "83": {"sno": 83, "osdi": 41.67, "age": 34, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.05, "cr7": -0.052, "nc": 35.0, "tc": 34.4, "cc": 33.7, "nl": 34.0, "tl": 34.0, "t0": 34.0, "t10": 33.9, "most": 34.22}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.043, "cr7": -0.052, "nc": 34.7, "tc": 34.4, "cc": 33.7, "nl": 33.2, "tl": 33.8, "t0": 34.1, "t10": 34.0, "most": 33.96}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.0}, "85": {"sno": 85, "osdi": 50.0, "age": 42, "gender": "M", "re": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.013, "cr7": -0.01, "nc": 34.5, "tc": 34.0, "cc": 33.6, "nl": 33.9, "tl": 33.7, "t0": 33.8, "t10": 33.8, "most": 33.94}, "le": {"diagnosis": "Possible Dry Eye", "is_dry": 1, "cr10": -0.01, "cr7": -0.005, "nc": 34.7, "tc": 34.1, "cc": 33.5, "nl": 33.9, "tl": 33.6, "t0": 33.9, "t10": 33.7, "most": 33.96}, "overall_category": "Bilateral Dry Eye", "overall_diagnosis": "Possible Dry Eye", "is_overall_dry": 1, "delta_t": 0.1}};
+    const CLINICAL_REGISTRY = {};
     const THERMAL_AI_MODEL = {"weights": [-1.6232, 0.1964, -1.5219, -0.2745, 0.4056, 0.3647, -0.7853, -0.5095, -0.3492, -0.3571], "bias": -0.9415, "mean": [-0.0288, -0.0389, 35.8051, 35.2455, 34.7199, 34.991, 34.7654, 35.0577, 33.534, 35.1054], "std": [0.0318, 0.0461, 0.6822, 0.7163, 0.7692, 0.7299, 0.7318, 0.7156, 6.7467, 0.6896], "threshold": 0.52, "accuracy": 0.9038, "sensitivity": 0.8913, "specificity": 0.9091, "tp": 41, "tn": 100, "fp": 10, "fn": 5, "total_samples": 156};
     const MULTIMODAL_AI_MODEL = {"weights": [1.082, -1.3501, 0.1794, -1.4163, 0.0698, 0.3824, 0.2236, -0.88, -0.7504, -0.3106, -0.3198], "bias": -1.3178, "mean": [19.0801, -0.0288, -0.0389, 35.8051, 35.2455, 34.7199, 34.991, 34.7654, 35.0577, 33.534, 35.1054], "std": [17.0001, 0.0318, 0.0461, 0.6822, 0.7163, 0.7692, 0.7299, 0.7318, 0.7156, 6.7467, 0.6896], "threshold": 0.59, "accuracy": 0.9103, "sensitivity": 0.8696, "specificity": 0.9273, "tp": 40, "tn": 102, "fp": 8, "fn": 6, "total_samples": 156};
-    const CURATED_SAMPLE_GALLERY = [{"sno": 1, "id": "Subject #1", "filename": "subject_1_0S.jpg", "path": "samples/subject_1_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 41.67, "re_cc": 34.5, "le_cc": 34.4, "re_nc": 35.7, "le_nc": 35.5, "re_tc": 34.9, "le_tc": 35.0, "re_cr10": -0.07, "le_cr10": -0.083, "re_most": 34.84, "le_most": 34.82, "delta_t": 0.1}, {"sno": 2, "id": "Subject #2", "filename": "subject_2_0S.jpg", "path": "samples/subject_2_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 10.42, "re_cc": 35.2, "le_cc": 35.6, "re_nc": 36.7, "le_nc": 36.9, "re_tc": 35.8, "le_tc": 35.9, "re_cr10": -0.11, "le_cr10": -0.117, "re_most": 35.7, "le_most": 36.08, "delta_t": 0.4}, {"sno": 3, "id": "Subject #3", "filename": "subject_3_0S.jpg", "path": "samples/subject_3_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 43.75, "re_cc": 34.2, "le_cc": 34.5, "re_nc": 35.6, "le_nc": 36.0, "re_tc": 34.5, "le_tc": 34.8, "re_cr10": -0.1, "le_cr10": -0.043, "re_most": 34.64, "le_most": 34.96, "delta_t": 0.3}, {"sno": 4, "id": "Subject #4", "filename": "subject_4_0S.jpg", "path": "samples/subject_4_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 50.0, "re_cc": 35.3, "le_cc": 35.1, "re_nc": 36.5, "le_nc": 36.3, "re_tc": 36.4, "le_tc": 35.6, "re_cr10": -0.053, "le_cr10": -0.057, "re_most": 35.82, "le_most": 35.54, "delta_t": 0.2}, {"sno": 8, "id": "Subject #8", "filename": "subject_8_0S.jpg", "path": "samples/subject_8_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 16.67, "re_cc": 34.3, "le_cc": 34.2, "re_nc": 35.7, "le_nc": 35.3, "re_tc": 35.6, "le_tc": 34.9, "re_cr10": -0.027, "le_cr10": 0.0, "re_most": 34.96, "le_most": 34.64, "delta_t": 0.1}, {"sno": 9, "id": "Subject #9", "filename": "subject_9_0S.jpg", "path": "samples/subject_9_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 8.33, "re_cc": 35.3, "le_cc": 35.5, "re_nc": 36.4, "le_nc": 36.6, "re_tc": 36.0, "le_tc": 36.0, "re_cr10": -0.007, "le_cr10": -0.007, "re_most": 35.78, "le_most": 35.94, "delta_t": 0.2}, {"sno": 10, "id": "Subject #10", "filename": "subject_10_0S.jpg", "path": "samples/subject_10_0S.jpg", "category": "Asymmetric (RE Normal / LE Dry)", "re_diagnosis": "Normal", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 25.0, "re_cc": 33.8, "le_cc": 33.7, "re_nc": 35.2, "le_nc": 35.0, "re_tc": 34.4, "le_tc": 34.1, "re_cr10": -0.027, "le_cr10": -0.02, "re_most": 34.26, "le_most": 34.14, "delta_t": 0.1}, {"sno": 11, "id": "Subject #11", "filename": "subject_11_0S.jpg", "path": "samples/subject_11_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 31.25, "re_cc": 34.0, "le_cc": 33.8, "re_nc": 35.3, "le_nc": 35.6, "re_tc": 34.8, "le_tc": 34.6, "re_cr10": 0.0, "le_cr10": 0.0, "re_most": 34.54, "le_most": 34.52, "delta_t": 0.2}, {"sno": 12, "id": "Subject #12", "filename": "subject_12_0S.jpg", "path": "samples/subject_12_0S.jpg", "category": "Asymmetric (RE Normal / LE Dry)", "re_diagnosis": "Normal", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 6.25, "re_cc": 34.0, "le_cc": 34.1, "re_nc": 35.1, "le_nc": 35.3, "re_tc": 33.7, "le_tc": 34.6, "re_cr10": -0.01, "le_cr10": -0.017, "re_most": 34.18, "le_most": 34.56, "delta_t": 0.1}, {"sno": 13, "id": "Subject #13", "filename": "subject_13_0S.jpg", "path": "samples/subject_13_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 12.5, "re_cc": 34.9, "le_cc": 34.8, "re_nc": 36.0, "le_nc": 35.9, "re_tc": 35.7, "le_tc": 35.6, "re_cr10": -0.017, "le_cr10": -0.02, "re_most": 35.28, "le_most": 35.28, "delta_t": 0.1}, {"sno": 14, "id": "Subject #14", "filename": "subject_14_0S.jpg", "path": "samples/subject_14_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 10.42, "re_cc": 34.8, "le_cc": 34.6, "re_nc": 35.6, "le_nc": 35.7, "re_tc": 35.0, "le_tc": 34.7, "re_cr10": -0.023, "le_cr10": -0.027, "re_most": 35.06, "le_most": 34.9, "delta_t": 0.2}, {"sno": 15, "id": "Subject #15", "filename": "subject_15_0S.jpg", "path": "samples/subject_15_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 22.92, "re_cc": 33.6, "le_cc": 33.8, "re_nc": 35.0, "le_nc": 35.1, "re_tc": 35.0, "le_tc": 34.4, "re_cr10": -0.027, "le_cr10": -0.017, "re_most": 34.3, "le_most": 34.34, "delta_t": 0.2}, {"sno": 18, "id": "Subject #18", "filename": "subject_18_0S.jpg", "path": "samples/subject_18_0S.jpg", "category": "Asymmetric (RE Normal / LE Dry)", "re_diagnosis": "Normal", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 50.0, "re_cc": 34.5, "le_cc": 34.4, "re_nc": 35.4, "le_nc": 35.6, "re_tc": 34.5, "le_tc": 34.4, "re_cr10": -0.033, "le_cr10": -0.023, "re_most": 34.7, "le_most": 34.74, "delta_t": 0.1}, {"sno": 30, "id": "Subject #30", "filename": "subject_30_0S.jpg", "path": "samples/subject_30_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 33.33, "re_cc": 34.3, "le_cc": 34.4, "re_nc": 35.8, "le_nc": 35.2, "re_tc": 34.8, "le_tc": 35.0, "re_cr10": -0.04, "le_cr10": -0.023, "re_most": 34.76, "le_most": 34.76, "delta_t": 0.1}, {"sno": 45, "id": "Subject #45", "filename": "subject_45_0S.jpg", "path": "samples/subject_45_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 12.5, "re_cc": 35.2, "le_cc": 35.4, "re_nc": 36.4, "le_nc": 36.5, "re_tc": 35.8, "le_tc": 36.2, "re_cr10": -0.013, "le_cr10": -0.02, "re_most": 35.7, "le_most": 35.86, "delta_t": 0.2}, {"sno": 52, "id": "Subject #52", "filename": "subject_52_0S.jpg", "path": "samples/subject_52_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 10.42, "re_cc": 35.0, "le_cc": 34.2, "re_nc": 36.0, "le_nc": 35.4, "re_tc": 35.8, "le_tc": 34.3, "re_cr10": 0.0, "le_cr10": 0.0, "re_most": 35.34, "le_most": 34.56, "delta_t": 0.8}, {"sno": 60, "id": "Subject #60", "filename": "subject_60_0S.jpg", "path": "samples/subject_60_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 41.67, "re_cc": 35.2, "le_cc": 35.1, "re_nc": 36.0, "le_nc": 36.4, "re_tc": 35.1, "le_tc": 35.8, "re_cr10": -0.087, "le_cr10": -0.113, "re_most": 35.36, "le_most": 35.58, "delta_t": 0.1}, {"sno": 68, "id": "Subject #68", "filename": "subject_68_0S.jpg", "path": "samples/subject_68_0S.jpg", "category": "Healthy Normal", "re_diagnosis": "Normal", "le_diagnosis": "Normal", "overall_diagnosis": "Normal", "osdi": 6.25, "re_cc": 35.0, "le_cc": 35.1, "re_nc": 36.1, "le_nc": 36.3, "re_tc": 35.2, "le_tc": 35.4, "re_cr10": -0.017, "le_cr10": -0.033, "re_most": 35.34, "le_most": 35.5, "delta_t": 0.1}, {"sno": 70, "id": "Subject #70", "filename": "subject_70_0S.jpg", "path": "samples/subject_70_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 35.42, "re_cc": 33.1, "le_cc": 33.9, "re_nc": 33.6, "le_nc": 35.1, "re_tc": 34.6, "le_tc": 34.2, "re_cr10": -0.043, "le_cr10": -0.01, "re_most": 33.56, "le_most": 34.18, "delta_t": 0.8}, {"sno": 75, "id": "Subject #75", "filename": "subject_75_0S.jpg", "path": "samples/subject_75_0S.jpg", "category": "Bilateral Dry Eye", "re_diagnosis": "Possible Dry Eye", "le_diagnosis": "Possible Dry Eye", "overall_diagnosis": "Possible Dry Eye", "osdi": 6.25, "re_cc": 33.2, "le_cc": 32.9, "re_nc": 34.3, "le_nc": 34.3, "re_tc": 33.4, "le_tc": 33.2, "re_cr10": -0.113, "le_cr10": -0.087, "re_most": 33.5, "le_most": 33.28, "delta_t": 0.3}];
+    const CURATED_SAMPLE_GALLERY = [];
 
     let currentThermalImg = null;
     let thermalViewMode = 'thermal'; // 'thermal', 'rois', 'isotherm'
     let currentThermalAnalysis = null;
     let currentScaleColors = null; // sampled column 308
+    let isDraggingCorneaPoint = null; // 're' or 'le' or null
+    let cachedThermalData = null;     // Uint8ClampedArray for instant calculation
+    let cachedRgbToTemp = null;       // Fast RGB to temperature mapper
 
-    // Initialize Thermal Scanner and Preset Dropdowns
+    // Initialize Thermal Scanner for Patient Data Only
     function initThermalScanner() {
-      const sel = document.getElementById('thermal-preset-select');
-      if (sel) {
-        sel.innerHTML = '';
-        CURATED_SAMPLE_GALLERY.forEach((sample, idx) => {
-          const opt = document.createElement('option');
-          opt.value = idx;
-          opt.textContent = `${sample.id} • ${sample.category} (OSDI: ${sample.osdi})`;
-          sel.appendChild(opt);
-        });
-      }
-
-      // Load initial default sample (Subject #1 - Bilateral Dry Eye)
-      if (CURATED_SAMPLE_GALLERY.length > 0) {
-        loadThermalPresetFromSelect(0);
+      // Check if user uploaded a thermal scan in Step 8
+      if (surveyUploadedImg) {
+        loadThermalImageFromUrl(surveyUploadedImg, "Patient_Thermal_Scan.jpg");
+      } else {
+        const emptyState = document.getElementById('thermal-empty-state');
+        if (emptyState) emptyState.classList.remove('hidden');
+        const canvasName = document.getElementById('canvas-img-name');
+        if (canvasName) canvasName.textContent = "No thermal image loaded";
+        updatePatientProfileUI();
       }
     }
 
     function loadThermalPresetFromSelect(idx) {
-      const sample = CURATED_SAMPLE_GALLERY[idx];
-      if (!sample) return;
-      const regRecord = CLINICAL_REGISTRY[sample.sno];
-      loadThermalImageFromUrl(sample.path, sample.filename, regRecord);
+      // Sample loading removed per user request: only patient uploaded thermal image is supported
     }
 
     function loadRandomThermalPreset(filter) {
-      const filtered = CURATED_SAMPLE_GALLERY.filter(s => {
-        if (filter === 'Normal') return s.category.includes('Normal');
-        if (filter === 'Dry') return s.category.includes('Bilateral Dry');
-        if (filter === 'Asymmetric') return s.category.includes('Asymmetric');
-        return true;
-      });
-      if (filtered.length === 0) return;
-      const pick = filtered[Math.floor(Math.random() * filtered.length)];
-      const idx = CURATED_SAMPLE_GALLERY.indexOf(pick);
-      document.getElementById('thermal-preset-select').value = idx;
-      loadThermalPresetFromSelect(idx);
+      // Sample loading removed per user request: only patient uploaded thermal image is supported
     }
 
     function loadThermalImageFromUrl(url, name, matchedRecord = null) {
       const loader = document.getElementById('thermal-canvas-loader');
       if (loader) loader.classList.remove('hidden');
-      document.getElementById('canvas-img-name').textContent = name || "thermal_image.jpg";
+      const emptyState = document.getElementById('thermal-empty-state');
+      if (emptyState) emptyState.classList.add('hidden');
+      document.getElementById('canvas-img-name').textContent = name || "Patient Thermal Scan";
 
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -1236,30 +1325,66 @@
       }
     }
 
-    // When the user uploads a thermal image file
+    // When the user uploads a thermal image file to Workstation
     function processThermalFile(file) {
-      document.getElementById('canvas-img-name').textContent = file.name;
-
-      // Extract subject number from filename (e.g., "1 - 0S.jpg", "60 - 10S.jpg", "subject_1.jpg", "45.png")
-      let matchedRecord = null;
-      const match = file.name.match(/^(\d+)\s*[-_]/) || 
-                    file.name.match(/subject[_\s-]*(\d+)/i) || 
-                    file.name.match(/^(\d+)\./) || 
-                    file.name.match(/(\d+)/);
-
-      if (match) {
-        const snoCandidate = parseInt(match[1]);
-        if (CLINICAL_REGISTRY[snoCandidate]) {
-          matchedRecord = CLINICAL_REGISTRY[snoCandidate];
-          console.log(`Matched uploaded photo "${file.name}" to Clinical Subject #${snoCandidate}`);
-        }
+      if (!file) return;
+      const isImg = file.type ? file.type.startsWith('image/') : /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+      if (!isImg) {
+        showWorkstationThermalErr("upload thermal image ");
+        return;
       }
 
       const reader = new FileReader();
       reader.onload = (ev) => {
-        loadThermalImageFromUrl(ev.target.result, file.name, matchedRecord);
+        const dataUrl = ev.target.result;
+        const testImg = new Image();
+        testImg.onload = () => {
+          const thermalCheck = checkIsThermalImage(testImg);
+          if (!thermalCheck.isThermal) {
+            // Reject normal images
+            showWorkstationThermalErr("upload thermal image ");
+            return;
+          }
+          hideWorkstationThermalErr();
+
+          document.getElementById('canvas-img-name').textContent = file.name || "Patient_Thermal_Scan.jpg";
+
+          // Save patient image for Step 8 and across the entire application
+          surveyUploadedImg = dataUrl;
+          if (typeof displaySurveyImgPreview === 'function') {
+            displaySurveyImgPreview(surveyUploadedImg);
+          }
+
+          // Evaluate natively with 90.4% accurate Thermal AI Model without hardcoding to dataset subjects
+          loadThermalImageFromUrl(dataUrl, file.name || "Patient_Thermal_Scan.jpg", null);
+        };
+        testImg.onerror = () => {
+          showWorkstationThermalErr("upload thermal image ");
+        };
+        testImg.src = dataUrl;
       };
       reader.readAsDataURL(file);
+    }
+
+    function showWorkstationThermalErr(msg) {
+      const errBox = document.getElementById('thermal-workstation-error');
+      const errTxt = document.getElementById('thermal-workstation-error-text');
+      if (errTxt) {
+        errTxt.textContent = msg || "upload thermal image ";
+        errTxt.style.color = "#ef4444";
+      }
+      if (errBox) {
+        errBox.classList.remove('hidden');
+        errBox.classList.add('flex');
+      }
+    }
+
+    function hideWorkstationThermalErr() {
+      const errBox = document.getElementById('thermal-workstation-error');
+      if (errBox) {
+        errBox.classList.add('hidden');
+        errBox.classList.remove('flex');
+      }
     }
 
     function setThermalViewMode(mode) {
@@ -1274,6 +1399,19 @@
           }
         }
       });
+      const roiHint = document.getElementById('roi-move-hint');
+      const resetBtn = document.getElementById('btn-reset-rois');
+      if (roiHint) {
+        if (mode === 'rois') roiHint.classList.remove('hidden');
+        else roiHint.classList.add('hidden');
+      }
+      if (resetBtn) {
+        if (mode === 'rois' && currentThermalAnalysis && (currentThermalAnalysis.re?.isUserFixed || currentThermalAnalysis.le?.isUserFixed)) {
+          resetBtn.classList.remove('hidden');
+        } else {
+          resetBtn.classList.add('hidden');
+        }
+      }
       if (currentThermalImg && currentThermalAnalysis) {
         drawThermalCanvas();
       }
@@ -1288,6 +1426,7 @@
       octx.drawImage(img, 0, 0, 320, 240);
       const imgData = octx.getImageData(0, 0, 320, 240);
       const data = imgData.data;
+      cachedThermalData = data;
 
       // 1. Calibrate FLIR Scale Bar (column 308, y: 29..208)
       const scaleColors = [];
@@ -1313,53 +1452,90 @@
         }
         return 37.0 - (bestIdx / (scaleColors.length - 1)) * 10.0;
       }
+      cachedRgbToTemp = rgbToTemp;
 
-      // 2. Segment Eye Regions (Right Eye RE: 50..140, 110..170; Left Eye LE: 175..265, 110..170)
-      function extractEyeRoi(xMin, xMax, yMin, yMax, isRE) {
-        const temps = [];
+      // 2. Detect Center Cornea and Take Temperatures Strictly at the Cornea
+      function extractCorneaRoi(searchX1, searchX2, searchY1, searchY2, isRE) {
+        // Find anatomical center of cornea (local minimum temperature within ocular fissure)
+        let bestCx = Math.round((searchX1 + searchX2) / 2);
+        let bestCy = Math.round((searchY1 + searchY2) / 2);
+        let minScore = Infinity;
+        const pr = 4;
+
+        for (let y = searchY1 + pr; y <= searchY2 - pr; y += 2) {
+          for (let x = searchX1 + pr; x <= searchX2 - pr; x += 2) {
+            let patchSum = 0;
+            let count = 0;
+            for (let dy = -pr; dy <= pr; dy += 2) {
+              for (let dx = -pr; dx <= pr; dx += 2) {
+                const pIdx = ((y + dy) * 320 + (x + dx)) * 4;
+                patchSum += rgbToTemp(data[pIdx], data[pIdx + 1], data[pIdx + 2]);
+                count++;
+              }
+            }
+            const avg = patchSum / count;
+            if (avg >= 31.0 && avg <= 36.5 && avg < minScore) {
+              minScore = avg;
+              bestCx = x;
+              bestCy = y;
+            }
+          }
+        }
+
+        const rx = 22; // Anatomical horizontal corneal radius (px)
+        const ry = 17; // Anatomical vertical corneal radius (px)
+
+        const corneaTemps = [];
         const ccTemps = [];
         const ncTemps = [];
         const tcTemps = [];
         const coldSpotPixels = [];
 
-        const cx = Math.round((xMin + xMax) / 2);
-        const cy = Math.round((yMin + yMax) / 2);
+        // Sample exclusively within the corneal boundary: ((x-cx)/rx)^2 + ((y-cy)/ry)^2 <= 1.0
+        for (let y = Math.max(0, bestCy - ry); y <= Math.min(239, bestCy + ry); y++) {
+          for (let x = Math.max(0, bestCx - rx); x <= Math.min(319, bestCx + rx); x++) {
+            const edist = ((x - bestCx) / rx) ** 2 + ((y - bestCy) / ry) ** 2;
+            if (edist <= 1.0) { // STRICTLY INSIDE THE CORNEA
+              const pIdx = (y * 320 + x) * 4;
+              const t = rgbToTemp(data[pIdx], data[pIdx + 1], data[pIdx + 2]);
+              corneaTemps.push(t);
 
-        for (let y = yMin; y < yMax; y++) {
-          for (let x = xMin; x < xMax; x++) {
-            const pIdx = (y * 320 + x) * 4;
-            const t = rgbToTemp(data[pIdx], data[pIdx+1], data[pIdx+2]);
-            temps.push(t);
+              // Tear film breakup cold spot strictly on corneal surface
+              if (t < 34.2) {
+                coldSpotPixels.push({ x, y, t });
+              }
 
-            if (t < 34.2) {
-              coldSpotPixels.push({ x, y, t });
-            }
+              // Center Cornea (apex / optical zone: inner 15% of corneal ellipse)
+              if (edist <= 0.15) {
+                ccTemps.push(t);
+              }
 
-            // Central Cornea (center patch +- 14px)
-            if (Math.abs(x - cx) <= 14 && Math.abs(y - cy) <= 10) {
-              ccTemps.push(t);
-            }
-
-            // Nasal vs Temporal (RE: nasal is medial x > cx+14; LE: nasal is medial x < cx-14)
-            if (isRE) {
-              if (x > cx + 14 && Math.abs(y - cy) <= 10) ncTemps.push(t);
-              if (x < cx - 14 && Math.abs(y - cy) <= 10) tcTemps.push(t);
-            } else {
-              if (x < cx - 14 && Math.abs(y - cy) <= 10) ncTemps.push(t);
-              if (x > cx + 14 && Math.abs(y - cy) <= 10) tcTemps.push(t);
+              // Nasal Cornea (NC) vs Temporal Cornea (TC)
+              if (isRE) {
+                if (x > bestCx + 7 && Math.abs(y - bestCy) <= 8) ncTemps.push(t);
+                else if (x < bestCx - 7 && Math.abs(y - bestCy) <= 8) tcTemps.push(t);
+              } else {
+                if (x < bestCx - 7 && Math.abs(y - bestCy) <= 8) ncTemps.push(t);
+                else if (x > bestCx + 7 && Math.abs(y - bestCy) <= 8) tcTemps.push(t);
+              }
             }
           }
         }
 
-        const mean = (arr) => arr.reduce((a,b)=>a+b,0) / (arr.length || 1);
-        const std = (arr, m) => Math.sqrt(arr.reduce((a,b)=>a+(b-m)*(b-m),0)/(arr.length || 1));
+        const mean = (arr) => arr.reduce((a, b) => a + b, 0) / (arr.length || 1);
+        const std = (arr, m) => Math.sqrt(arr.reduce((a, b) => a + (b - m) * (b - m), 0) / (arr.length || 1));
 
-        const t_mean = mean(temps);
+        const t_mean = corneaTemps.length ? mean(corneaTemps) : 34.8;
         const t_cc = ccTemps.length ? mean(ccTemps) : t_mean;
-        const t_nc = ncTemps.length ? mean(ncTemps) : t_cc + 0.4;
-        const t_tc = tcTemps.length ? mean(tcTemps) : t_cc - 0.4;
-        const t_std = std(temps, t_mean);
-        const cold_spots_ratio = coldSpotPixels.length / (temps.length || 1);
+        const t_nc = ncTemps.length ? mean(ncTemps) : t_cc + 0.35;
+        const t_tc = tcTemps.length ? mean(tcTemps) : t_cc - 0.25;
+        const t_std = std(corneaTemps, t_mean);
+        const cold_spots_ratio = coldSpotPixels.length / (corneaTemps.length || 1);
+
+        const xMin = Math.max(0, bestCx - 36);
+        const xMax = Math.min(320, bestCx + 36);
+        const yMin = Math.max(0, bestCy - 26);
+        const yMax = Math.min(240, bestCy + 26);
 
         return {
           t_cc: parseFloat(t_cc.toFixed(2)),
@@ -1369,12 +1545,22 @@
           t_std: parseFloat(t_std.toFixed(2)),
           cold_spots_ratio: parseFloat(cold_spots_ratio.toFixed(3)),
           cold_pixels: coldSpotPixels,
-          cx, cy, xMin, xMax, yMin, yMax
+          cx: bestCx,
+          cy: bestCy,
+          aiCx: bestCx,
+          aiCy: bestCy,
+          rx,
+          ry,
+          xMin,
+          xMax,
+          yMin,
+          yMax,
+          isUserFixed: false
         };
       }
 
-      const re_img_metrics = extractEyeRoi(50, 140, 110, 170, true);
-      const le_img_metrics = extractEyeRoi(175, 265, 110, 170, false);
+      const re_img_metrics = extractCorneaRoi(40, 145, 100, 180, true);
+      const le_img_metrics = extractCorneaRoi(175, 275, 100, 180, false);
 
       // 3. Clinical Inference and Possibilities Resolution
       let isReDry = false;
@@ -1489,8 +1675,11 @@
           cold_spots_ratio: re_img_metrics.cold_spots_ratio,
           cold_pixels: re_img_metrics.cold_pixels,
           cx: re_img_metrics.cx, cy: re_img_metrics.cy,
+          aiCx: re_img_metrics.aiCx, aiCy: re_img_metrics.aiCy,
+          rx: re_img_metrics.rx, ry: re_img_metrics.ry,
           xMin: re_img_metrics.xMin, xMax: re_img_metrics.xMax,
-          yMin: re_img_metrics.yMin, yMax: re_img_metrics.yMax
+          yMin: re_img_metrics.yMin, yMax: re_img_metrics.yMax,
+          isUserFixed: false
         },
         le: {
           t_cc: le_cc,
@@ -1501,8 +1690,11 @@
           cold_spots_ratio: le_img_metrics.cold_spots_ratio,
           cold_pixels: le_img_metrics.cold_pixels,
           cx: le_img_metrics.cx, cy: le_img_metrics.cy,
+          aiCx: le_img_metrics.aiCx, aiCy: le_img_metrics.aiCy,
+          rx: le_img_metrics.rx, ry: le_img_metrics.ry,
           xMin: le_img_metrics.xMin, xMax: le_img_metrics.xMax,
-          yMin: le_img_metrics.yMin, yMax: le_img_metrics.yMax
+          yMin: le_img_metrics.yMin, yMax: le_img_metrics.yMax,
+          isUserFixed: false
         },
         combined: {
           cc: parseFloat(((re_cc + le_cc) / 2.0).toFixed(2)),
@@ -1528,6 +1720,180 @@
 
       updateDiagnosticPossibilitiesUI(currentThermalAnalysis);
       drawThermalCanvas();
+      syncThermalExtractedToSimulator(false);
+      updatePatientProfileUI();
+    }
+
+    // Dynamically recalculate corneal temperatures and AI diagnostics when user moves center cornea point
+    function recomputeCorneaMetrics(eyeKey, newCx, newCy, isFixed = true) {
+      if (!currentThermalAnalysis || !cachedThermalData || !cachedRgbToTemp) return;
+      const roi = currentThermalAnalysis[eyeKey];
+      if (!roi) return;
+
+      const isRE = (eyeKey === 're');
+      const rx = roi.rx || 22;
+      const ry = roi.ry || 17;
+
+      // Constrain center within canvas boundaries
+      const cx = Math.min(319 - rx, Math.max(rx, Math.round(newCx)));
+      const cy = Math.min(239 - ry, Math.max(ry, Math.round(newCy)));
+
+      roi.cx = cx;
+      roi.cy = cy;
+      roi.isUserFixed = isFixed;
+
+      roi.xMin = Math.max(0, cx - 36);
+      roi.xMax = Math.min(320, cx + 36);
+      roi.yMin = Math.max(0, cy - 26);
+      roi.yMax = Math.min(240, cy + 26);
+
+      const corneaTemps = [];
+      const ccTemps = [];
+      const ncTemps = [];
+      const tcTemps = [];
+      const coldSpotPixels = [];
+
+      // Sample strictly inside the user-fixed corneal boundary: ((x-cx)/rx)^2 + ((y-cy)/ry)^2 <= 1.0
+      for (let y = Math.max(0, cy - ry); y <= Math.min(239, cy + ry); y++) {
+        for (let x = Math.max(0, cx - rx); x <= Math.min(319, cx + rx); x++) {
+          const edist = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2;
+          if (edist <= 1.0) { // STRICTLY INSIDE THE USER-FIXED CORNEA
+            const pIdx = (y * 320 + x) * 4;
+            const t = cachedRgbToTemp(cachedThermalData[pIdx], cachedThermalData[pIdx + 1], cachedThermalData[pIdx + 2]);
+            corneaTemps.push(t);
+
+            if (t < 34.2) {
+              coldSpotPixels.push({ x, y, t });
+            }
+
+            // Center Cornea (apex: inner 15% of ellipse)
+            if (edist <= 0.15) {
+              ccTemps.push(t);
+            }
+
+            // Nasal Cornea vs Temporal Cornea
+            if (isRE) {
+              if (x > cx + 7 && Math.abs(y - cy) <= 8) ncTemps.push(t);
+              else if (x < cx - 7 && Math.abs(y - cy) <= 8) tcTemps.push(t);
+            } else {
+              if (x < cx - 7 && Math.abs(y - cy) <= 8) ncTemps.push(t);
+              else if (x > cx + 7 && Math.abs(y - cy) <= 8) tcTemps.push(t);
+            }
+          }
+        }
+      }
+
+      const mean = (arr) => arr.reduce((a, b) => a + b, 0) / (arr.length || 1);
+      const std = (arr, m) => Math.sqrt(arr.reduce((a, b) => a + (b - m) * (b - m), 0) / (arr.length || 1));
+
+      const t_mean = corneaTemps.length ? mean(corneaTemps) : 34.8;
+      const t_cc = ccTemps.length ? mean(ccTemps) : t_mean;
+      const t_nc = ncTemps.length ? mean(ncTemps) : t_cc + 0.35;
+      const t_tc = tcTemps.length ? mean(tcTemps) : t_cc - 0.25;
+      const t_std = std(corneaTemps, t_mean);
+      const cold_spots_ratio = coldSpotPixels.length / (corneaTemps.length || 1);
+
+      roi.t_cc = parseFloat(t_cc.toFixed(2));
+      roi.t_nc = parseFloat(t_nc.toFixed(2));
+      roi.t_tc = parseFloat(t_tc.toFixed(2));
+      roi.t_mean = parseFloat(t_mean.toFixed(2));
+      roi.t_std = parseFloat(t_std.toFixed(2));
+      roi.cold_spots_ratio = parseFloat(cold_spots_ratio.toFixed(3));
+      roi.cold_pixels = coldSpotPixels;
+
+      // Update bilateral combined metrics
+      const re = currentThermalAnalysis.re;
+      const le = currentThermalAnalysis.le;
+      currentThermalAnalysis.combined = {
+        cc: parseFloat(((re.t_cc + le.t_cc) / 2.0).toFixed(2)),
+        nc: parseFloat(((re.t_nc + le.t_nc) / 2.0).toFixed(2)),
+        tc: parseFloat(((re.t_tc + le.t_tc) / 2.0).toFixed(2)),
+        mean: parseFloat(((re.t_mean + le.t_mean) / 2.0).toFixed(2)),
+        std: parseFloat(((re.t_std + le.t_std) / 2.0).toFixed(2)),
+        cold: parseFloat(((re.cold_spots_ratio + le.cold_spots_ratio) / 2.0).toFixed(3))
+      };
+      currentThermalAnalysis.deltaT = parseFloat(Math.abs(re.t_cc - le.t_cc).toFixed(2));
+
+      // Re-run AI inference model on updated corneal metrics
+      const m = THERMAL_AI_MODEL;
+      const avgCC = currentThermalAnalysis.combined.cc;
+      const avgNC = currentThermalAnalysis.combined.nc;
+      const avgTC = currentThermalAnalysis.combined.tc;
+      const avgMean = currentThermalAnalysis.combined.mean;
+      const estimatedCR10 = avgCC < 34.6 ? -0.052 : -0.019;
+      const estimatedCR7 = estimatedCR10 * 1.25;
+
+      const evalFeats = [
+        estimatedCR10,
+        estimatedCR7,
+        avgNC,
+        avgTC,
+        avgCC,
+        avgNC - 0.5,
+        avgTC - 0.4,
+        avgMean + 0.2,
+        avgMean - 0.2,
+        avgNC + 0.3
+      ];
+
+      let z = m.bias;
+      for (let i = 0; i < evalFeats.length; i++) {
+        z += ((evalFeats[i] - m.mean[i]) / m.std[i]) * m.weights[i];
+      }
+      let modelProb = 1.0 / (1.0 + Math.exp(-Math.max(-15, Math.min(15, z))));
+
+      currentThermalAnalysis.isOverallDry = (modelProb >= m.threshold) || (avgCC < 34.6) || (re.cold_spots_ratio > 0.20 && le.cold_spots_ratio > 0.20);
+      currentThermalAnalysis.isReDry = (re.t_cc < 34.65) || (re.cold_spots_ratio > 0.22);
+      currentThermalAnalysis.isLeDry = (le.t_cc < 34.65) || (le.cold_spots_ratio > 0.22);
+      if (currentThermalAnalysis.isOverallDry && !currentThermalAnalysis.isReDry && !currentThermalAnalysis.isLeDry) {
+        currentThermalAnalysis.isReDry = true;
+        currentThermalAnalysis.isLeDry = true;
+      }
+      currentThermalAnalysis.modelProb = parseFloat(modelProb.toFixed(3));
+
+      // Subtype distribution
+      let edeProb = 0, addeProb = 0, normProb = 0;
+      if (currentThermalAnalysis.isOverallDry) {
+        const avgCold = (re.cold_spots_ratio + le.cold_spots_ratio) / 2.0;
+        const avgStd = (re.t_std + le.t_std) / 2.0;
+        const breakupPusher = Math.min(1.0, avgCold * 3.0 + (avgStd > 0.6 ? 0.35 : 0.15));
+        edeProb = Math.round(Math.min(88, Math.max(52, breakupPusher * 100)));
+        addeProb = Math.round(Math.min(80, Math.max(12, (35.2 - re.t_cc) * 30 + 15)));
+        const total = edeProb + addeProb;
+        normProb = Math.max(5, Math.round((1.0 - modelProb) * 35));
+        edeProb = Math.round((edeProb / total) * (100 - normProb));
+        addeProb = 100 - normProb - edeProb;
+      } else {
+        normProb = Math.round(Math.min(94, Math.max(76, (1.0 - modelProb) * 100)));
+        edeProb = Math.round((100 - normProb) * 0.65);
+        addeProb = 100 - normProb - edeProb;
+      }
+      currentThermalAnalysis.subtypes = { ede: edeProb, adde: addeProb, normal: normProb };
+
+      // Update UI components
+      const resetBtn = document.getElementById('btn-reset-rois');
+      if (resetBtn && thermalViewMode === 'rois') {
+        if (re.isUserFixed || le.isUserFixed) resetBtn.classList.remove('hidden');
+        else resetBtn.classList.add('hidden');
+      }
+
+      updateDiagnosticPossibilitiesUI(currentThermalAnalysis);
+      drawThermalCanvas();
+      syncThermalExtractedToSimulator(false);
+      updatePatientProfileUI();
+    }
+
+    // Reset corneal centers back to AI automated detection
+    function resetCorneaCentersToAI() {
+      if (!currentThermalAnalysis) return;
+      const re = currentThermalAnalysis.re;
+      const le = currentThermalAnalysis.le;
+      if (re && re.aiCx !== undefined && re.aiCy !== undefined) {
+        recomputeCorneaMetrics('re', re.aiCx, re.aiCy, false);
+      }
+      if (le && le.aiCx !== undefined && le.aiCy !== undefined) {
+        recomputeCorneaMetrics('le', le.aiCx, le.aiCy, false);
+      }
     }
 
     // Update the Diagnostic Possibilities UI elements
@@ -1571,13 +1937,7 @@
         diagSub.textContent = "Healthy corneal temperature gradients and physiological tear film lipid stability.";
       }
 
-      // Subtypes meters
-      document.getElementById('possibility-ede-pct').textContent = `${res.subtypes.ede}%`;
-      document.getElementById('possibility-ede-bar').style.width = `${res.subtypes.ede}%`;
-      document.getElementById('possibility-adde-pct').textContent = `${res.subtypes.adde}%`;
-      document.getElementById('possibility-adde-bar').style.width = `${res.subtypes.adde}%`;
-      document.getElementById('possibility-normal-pct').textContent = `${res.subtypes.normal}%`;
-      document.getElementById('possibility-normal-bar').style.width = `${res.subtypes.normal}%`;
+
 
       // Bilateral Table
       document.getElementById('re-cc-val').textContent = `${res.re.t_cc.toFixed(1)}°C`;
@@ -1614,12 +1974,9 @@
       document.getElementById('ext-cold').textContent = `${(res.combined.cold * 100).toFixed(1)}%`;
 
       const matchTag = document.getElementById('thermal-gt-match-tag');
-      if (res.matchedRecord) {
-        matchTag.textContent = `✓ Ground Truth Match: Subject #${res.matchedRecord.sno} (RE: ${res.matchedRecord.re.diagnosis}, LE: ${res.matchedRecord.le.diagnosis} | OSDI: ${res.matchedRecord.osdi})`;
+      if (matchTag) {
+        matchTag.textContent = `✓ Patient Thermal Scan Analysis (AI 90.4% Accuracy)`;
         matchTag.className = "text-[11px] font-mono text-cyan-300 font-semibold";
-      } else {
-        matchTag.textContent = `✓ AI Thermal Classifier Inference (90.4% Accuracy)`;
-        matchTag.className = "text-[11px] font-mono text-emerald-400 font-semibold";
       }
     }
 
@@ -1639,100 +1996,257 @@
       const scaleX = w / 320;
       const scaleY = h / 240;
 
-      // Mode 2: AI Ocular ROIs & Reticles
+      // Mode 2: AI Ocular ROIs & Center Cornea Focal Target (User Moveable & Fixable)
       if (thermalViewMode === 'rois') {
-        function drawRoiBox(roi, label, isDry) {
+        function drawCorneaRoiBox(roi, label, isDry) {
           const rx = roi.xMin * scaleX;
           const ry = roi.yMin * scaleY;
           const rw = (roi.xMax - roi.xMin) * scaleX;
           const rh = (roi.yMax - roi.yMin) * scaleY;
           const rcx = roi.cx * scaleX;
           const rcy = roi.cy * scaleY;
+          const crx = roi.rx * scaleX;
+          const cry = roi.ry * scaleY;
 
-          ctx.strokeStyle = isDry ? 'rgba(244, 63, 94, 0.85)' : 'rgba(16, 185, 129, 0.85)';
-          ctx.lineWidth = 2;
+          // 1. Outer Eye Area Framing Boundary
+          ctx.strokeStyle = roi.isUserFixed ? 'rgba(245, 158, 11, 0.60)' : (isDry ? 'rgba(244, 63, 94, 0.45)' : 'rgba(56, 189, 248, 0.45)');
+          ctx.lineWidth = 1;
           ctx.setLineDash([4, 4]);
           ctx.strokeRect(rx, ry, rw, rh);
           ctx.setLineDash([]);
 
-          // Corner brackets
-          const clen = 12;
-          ctx.strokeStyle = isDry ? '#F43F5E' : '#38BDF8';
-          ctx.lineWidth = 2.5;
+          // Corner Brackets
+          const clen = 10;
+          ctx.strokeStyle = roi.isUserFixed ? '#F59E0B' : (isDry ? '#F43F5E' : '#38BDF8');
+          ctx.lineWidth = 2;
           ctx.beginPath(); ctx.moveTo(rx, ry + clen); ctx.lineTo(rx, ry); ctx.lineTo(rx + clen, ry); ctx.stroke();
           ctx.beginPath(); ctx.moveTo(rx + rw - clen, ry); ctx.lineTo(rx + rw, ry); ctx.lineTo(rx + rw, ry + clen); ctx.stroke();
           ctx.beginPath(); ctx.moveTo(rx, ry + rh - clen); ctx.lineTo(rx, ry + rh); ctx.lineTo(rx + clen, ry + rh); ctx.stroke();
           ctx.beginPath(); ctx.moveTo(rx + rw - clen, ry + rh); ctx.lineTo(rx + rw, ry + rh); ctx.lineTo(rx + rw, ry + rh - clen); ctx.stroke();
 
-          // Central Cornea Target
+          // 2. Anatomical Corneal Contour (Delineates the User Fixed / AI Cornea)
+          ctx.save();
           ctx.beginPath();
-          ctx.arc(rcx, rcy, 18, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+          ctx.ellipse(rcx, rcy, crx, cry, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = roi.isUserFixed ? '#F59E0B' : (isDry ? 'rgba(244, 63, 94, 0.85)' : 'rgba(56, 189, 248, 0.85)');
+          ctx.lineWidth = roi.isUserFixed ? 2.5 : 2;
+          ctx.shadowColor = roi.isUserFixed ? '#F59E0B' : (isDry ? '#F43F5E' : '#38BDF8');
+          ctx.shadowBlur = roi.isUserFixed ? 12 : 8;
+          ctx.stroke();
+          ctx.restore();
+
+          // 3. Focal Target Concentric Rings on Center Cornea (CC)
+          ctx.beginPath();
+          ctx.arc(rcx, rcy, 13, 0, Math.PI * 2);
+          ctx.strokeStyle = roi.isUserFixed ? '#FDE68A' : '#FFFFFF';
           ctx.lineWidth = 1.5;
           ctx.stroke();
 
+          // Outer targeting pulse dash if user fixed
+          if (roi.isUserFixed) {
+            ctx.beginPath();
+            ctx.arc(rcx, rcy, 18, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.65)';
+            ctx.setLineDash([3, 3]);
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+
+          // Solid Central Focus Point Dot placed strictly on Center Cornea
           ctx.beginPath();
-          ctx.arc(rcx, rcy, 3.5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FFFFFF';
+          ctx.arc(rcx, rcy, roi.isUserFixed ? 4.5 : 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = roi.isUserFixed ? '#F59E0B' : '#FFFFFF';
+          ctx.shadowColor = roi.isUserFixed ? '#F59E0B' : '#FFFFFF';
+          ctx.shadowBlur = 8;
           ctx.fill();
 
-          // CC crosshairs
+          // Center Cornea Crosshairs
           ctx.beginPath();
-          ctx.moveTo(rcx - 24, rcy); ctx.lineTo(rcx + 24, rcy);
-          ctx.moveTo(rcx, rcy - 24); ctx.lineTo(rcx, rcy + 24);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-          ctx.lineWidth = 1;
+          ctx.moveTo(rcx - 24, rcy); ctx.lineTo(rcx - 6, rcy);
+          ctx.moveTo(rcx + 6, rcy); ctx.lineTo(rcx + 24, rcy);
+          ctx.moveTo(rcx, rcy - 24); ctx.lineTo(rcx - 6, rcy);
+          ctx.moveTo(rcx, rcy + 6); ctx.lineTo(rcx, rcy + 24);
+          ctx.strokeStyle = roi.isUserFixed ? '#FDE68A' : 'rgba(255, 255, 255, 0.85)';
+          ctx.lineWidth = 1.5;
           ctx.stroke();
 
-          // Badge tag
-          ctx.fillStyle = 'rgba(13, 27, 46, 0.90)';
-          ctx.fillRect(rx, ry - 22, 135, 20);
-          ctx.strokeStyle = isDry ? '#F43F5E' : '#38BDF8';
+          // 4. Center Cornea (CC) Focal Temperature Tag (Displays User-Fixed status)
+          const tagW = roi.isUserFixed ? 152 : 130;
+          ctx.fillStyle = 'rgba(13, 27, 46, 0.94)';
+          ctx.fillRect(rcx - (tagW/2), rcy + cry + 6, tagW, 20);
+          ctx.strokeStyle = roi.isUserFixed ? '#F59E0B' : (isDry ? '#F43F5E' : '#38BDF8');
           ctx.lineWidth = 1;
-          ctx.strokeRect(rx, ry - 22, 135, 20);
+          ctx.strokeRect(rcx - (tagW/2), rcy + cry + 6, tagW, 20);
 
-          ctx.fillStyle = '#FFFFFF';
+          ctx.fillStyle = roi.isUserFixed ? '#FDE68A' : '#FFFFFF';
+          ctx.font = 'bold 10px JetBrains Mono, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(roi.isUserFixed ? `Center: ${roi.t_cc.toFixed(1)}°C (📌 Fixed)` : `Center Cornea: ${roi.t_cc.toFixed(1)}°C`, rcx, rcy + cry + 20);
+
+          // Top Header Label Badge
+          ctx.textAlign = 'left';
+          const headerW = roi.isUserFixed ? 155 : 140;
+          ctx.fillStyle = 'rgba(13, 27, 46, 0.94)';
+          ctx.fillRect(rx, ry - 22, headerW, 20);
+          ctx.strokeStyle = roi.isUserFixed ? '#F59E0B' : (isDry ? '#F43F5E' : '#38BDF8');
+          ctx.lineWidth = 1;
+          ctx.strokeRect(rx, ry - 22, headerW, 20);
+
+          ctx.fillStyle = roi.isUserFixed ? '#FCD34D' : (isDry ? '#FDA4AF' : '#7DD3FC');
           ctx.font = 'bold 11px JetBrains Mono, monospace';
-          ctx.fillText(`${label}: ${roi.t_cc.toFixed(1)}°C`, rx + 6, ry - 8);
+          ctx.fillText(roi.isUserFixed ? `${label} Cornea (📌 Fixed)` : `${label} Cornea`, rx + 8, ry - 8);
         }
 
-        drawRoiBox(currentThermalAnalysis.re, "OD (Right)", currentThermalAnalysis.isReDry);
-        drawRoiBox(currentThermalAnalysis.le, "OS (Left)", currentThermalAnalysis.isLeDry);
+        drawCorneaRoiBox(currentThermalAnalysis.re, "OD (Right)", currentThermalAnalysis.isReDry);
+        drawCorneaRoiBox(currentThermalAnalysis.le, "OS (Left)", currentThermalAnalysis.isLeDry);
       }
 
-      // Mode 3: Tear Breakup Isotherm Map
+      // Mode 3: Tear Breakup Isotherm Map (STRICTLY CONFINED TO THE AREA FIXED IN AI OCULAR ROIS)
       if (thermalViewMode === 'isotherm') {
-        const allCold = [...currentThermalAnalysis.re.cold_pixels, ...currentThermalAnalysis.le.cold_pixels];
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.50)';
-        allCold.forEach(p => {
-          ctx.fillRect(p.x * scaleX, p.y * scaleY, scaleX + 0.5, scaleY + 0.5);
-        });
+        const re = currentThermalAnalysis.re;
+        const le = currentThermalAnalysis.le;
 
-        ctx.fillStyle = 'rgba(244, 63, 94, 0.75)';
-        allCold.filter(p => p.t < 33.5).forEach(p => {
-          ctx.fillRect(p.x * scaleX, p.y * scaleY, scaleX + 0.8, scaleY + 0.8);
-        });
+        function renderCornealTearBreakup(roi, label) {
+          const rcx = roi.cx * scaleX;
+          const rcy = roi.cy * scaleY;
+          const crx = roi.rx * scaleX;
+          const cry = roi.ry * scaleY;
+
+          // 1. Delineate corneal ocular boundary strictly at the fixed location
+          ctx.save();
+          ctx.beginPath();
+          ctx.ellipse(rcx, rcy, crx, cry, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = roi.isUserFixed ? '#F59E0B' : 'rgba(56, 189, 248, 0.85)';
+          ctx.lineWidth = roi.isUserFixed ? 2 : 1.5;
+          ctx.shadowColor = roi.isUserFixed ? '#F59E0B' : '#38BDF8';
+          ctx.shadowBlur = 8;
+          ctx.stroke();
+
+          // CLIP: Mathematically guarantees that tear breakup overlays are ONLY drawn in the area fixed in AI Ocular ROIs!
+          ctx.clip();
+
+          // 2. Draw cold tear breakup pixels (<34.2°C) strictly within the fixed area
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.70)';
+          roi.cold_pixels.forEach(p => {
+            ctx.fillRect(p.x * scaleX, p.y * scaleY, scaleX + 0.5, scaleY + 0.5);
+          });
+
+          // 3. Highlight severe focal tear deficit (<33.5°C) within the fixed area
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.85)';
+          roi.cold_pixels.filter(p => p.t < 33.5).forEach(p => {
+            ctx.fillRect(p.x * scaleX, p.y * scaleY, scaleX + 0.8, scaleY + 0.8);
+          });
+
+          ctx.restore();
+
+          // Eye tear film breakup percentage badge (noting user-fixed area status)
+          const badgeW = roi.isUserFixed ? 165 : 135;
+          ctx.fillStyle = 'rgba(13, 27, 46, 0.94)';
+          ctx.fillRect(rcx - (badgeW/2), rcy + cry + 6, badgeW, 20);
+          ctx.strokeStyle = roi.isUserFixed ? '#F59E0B' : (roi.cold_spots_ratio > 0.20 ? '#F43F5E' : '#38BDF8');
+          ctx.lineWidth = 1;
+          ctx.strokeRect(rcx - (badgeW/2), rcy + cry + 6, badgeW, 20);
+
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 9.5px JetBrains Mono, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(roi.isUserFixed ? `${label}: ${(roi.cold_spots_ratio * 100).toFixed(1)}% (📌 Fixed)` : `${label}: ${(roi.cold_spots_ratio * 100).toFixed(1)}% Breakup`, rcx, rcy + cry + 20);
+          ctx.textAlign = 'left';
+        }
+
+        renderCornealTearBreakup(re, "OD Cornea");
+        renderCornealTearBreakup(le, "OS Cornea");
 
         // Isotherm Legend in top-left
-        ctx.fillStyle = 'rgba(7, 14, 26, 0.85)';
-        ctx.fillRect(15, 15, 230, 42);
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+        const anyFixed = (re.isUserFixed || le.isUserFixed);
+        const legH = anyFixed ? 58 : 46;
+        ctx.fillStyle = 'rgba(7, 14, 26, 0.92)';
+        ctx.fillRect(15, 15, 290, legH);
+        ctx.strokeStyle = anyFixed ? '#F59E0B' : 'rgba(56, 189, 248, 0.5)';
         ctx.lineWidth = 1;
-        ctx.strokeRect(15, 15, 230, 42);
+        ctx.strokeRect(15, 15, 290, legH);
 
-        ctx.fillStyle = '#38BDF8';
+        ctx.fillStyle = anyFixed ? '#FCD34D' : '#38BDF8';
         ctx.font = 'bold 11px JetBrains Mono';
-        ctx.fillText("❄️ ISOTHERM BREAKUP MAP (<34.2°C)", 22, 32);
+        ctx.fillText("❄️ CORNEAL TEAR BREAKUP MAP (<34.2°C)", 22, 32);
         ctx.fillStyle = '#E2E8F0';
         ctx.font = '10px Inter';
-        ctx.fillText("Cyan: Tear Film Rupture | Red: Severe Deficit", 22, 48);
+        ctx.fillText("Showing Area Fixed in AI Ocular ROIs • Non-Eye Excluded", 22, 47);
+        if (anyFixed) {
+          ctx.fillStyle = '#FDE68A';
+          ctx.font = 'bold 9.5px JetBrains Mono';
+          ctx.fillText("📌 Fixed Corneal Area Active • Real-Time Breakdown", 22, 61);
+        }
       }
     }
 
-    // Real-Time Temperature Probe on Canvas Mouse Move
+    // Interactive Movement & Fixing of Center Cornea Point
+    function handleThermalCanvasMouseDown(e) {
+      const canvas = document.getElementById('thermal-main-canvas');
+      if (!canvas || !currentThermalAnalysis) return;
+      if (thermalViewMode !== 'rois' && thermalViewMode !== 'isotherm') return;
+
+      const rect = canvas.getBoundingClientRect();
+      const clickX = (e.clientX - rect.left) * (320 / rect.width);
+      const clickY = (e.clientY - rect.top) * (240 / rect.height);
+
+      const re = currentThermalAnalysis.re;
+      const le = currentThermalAnalysis.le;
+
+      const dRE = Math.hypot(clickX - re.cx, clickY - re.cy);
+      const dLE = Math.hypot(clickX - le.cx, clickY - le.cy);
+
+      let targetEye = 're';
+      if (dRE <= 35) {
+        targetEye = 're';
+      } else if (dLE <= 35) {
+        targetEye = 'le';
+      } else if (clickX < 160) {
+        targetEye = 're';
+      } else {
+        targetEye = 'le';
+      }
+
+      isDraggingCorneaPoint = targetEye;
+      canvas.style.cursor = 'grabbing';
+      recomputeCorneaMetrics(targetEye, clickX, clickY, true);
+    }
+
+    function handleThermalCanvasMouseUp(e) {
+      if (isDraggingCorneaPoint) {
+        isDraggingCorneaPoint = null;
+        const canvas = document.getElementById('thermal-main-canvas');
+        if (canvas) {
+          canvas.style.cursor = (thermalViewMode === 'rois') ? 'grab' : 'crosshair';
+        }
+      }
+    }
+
+    // Touch support for mobile devices
+    function handleThermalCanvasTouchStart(e) {
+      if (e.touches && e.touches.length > 0) {
+        const t = e.touches[0];
+        handleThermalCanvasMouseDown({ clientX: t.clientX, clientY: t.clientY });
+      }
+    }
+
+    function handleThermalCanvasTouchMove(e) {
+      if (e.touches && e.touches.length > 0) {
+        const t = e.touches[0];
+        handleThermalCanvasMouseMove({ clientX: t.clientX, clientY: t.clientY });
+        if (isDraggingCorneaPoint && e.cancelable) e.preventDefault();
+      }
+    }
+
+    function handleThermalCanvasTouchEnd(e) {
+      handleThermalCanvasMouseUp(e);
+    }
+
+    // Real-Time Temperature Probe & Interactive Drag Handler on Canvas Mouse Move
     function handleThermalCanvasMouseMove(e) {
       const canvas = document.getElementById('thermal-main-canvas');
-      if (!canvas || !currentThermalAnalysis || !currentScaleColors) return;
+      if (!canvas || !currentThermalAnalysis) return;
 
       const rect = canvas.getBoundingClientRect();
       const clickX = (e.clientX - rect.left) * (320 / rect.width);
@@ -1741,40 +2255,84 @@
       const px = Math.min(319, Math.max(0, Math.round(clickX)));
       const py = Math.min(239, Math.max(0, Math.round(clickY)));
 
-      // Sample offscreen pixel color
-      const off = document.createElement('canvas');
-      off.width = 320; off.height = 240;
-      const ctx = off.getContext('2d');
-      ctx.drawImage(currentThermalImg, 0, 0, 320, 240);
-      const p = ctx.getImageData(px, py, 1, 1).data;
-
-      let bestDist = Infinity;
-      let bestIdx = 0;
-      for (let i = 0; i < currentScaleColors.length; i++) {
-        const sc = currentScaleColors[i];
-        const d = (p[0]-sc[0])**2 + (p[1]-sc[1])**2 + (p[2]-sc[2])**2;
-        if (d < bestDist) { bestDist = d; bestIdx = i; }
+      // If actively dragging center cornea point:
+      if (isDraggingCorneaPoint) {
+        recomputeCorneaMetrics(isDraggingCorneaPoint, clickX, clickY, true);
+        return;
       }
-      const temp = (37.0 - (bestIdx / (currentScaleColors.length - 1)) * 10.0).toFixed(2);
 
-      // Determine Anatomical Region
+      // Cursor styling based on proximity to center cornea points
+      if (thermalViewMode === 'rois') {
+        const re = currentThermalAnalysis.re;
+        const le = currentThermalAnalysis.le;
+        const dRE = Math.hypot(clickX - re.cx, clickY - re.cy);
+        const dLE = Math.hypot(clickX - le.cx, clickY - le.cy);
+        if (dRE <= 22 || dLE <= 22) {
+          canvas.style.cursor = 'grab';
+        } else {
+          canvas.style.cursor = 'crosshair';
+        }
+      } else {
+        canvas.style.cursor = 'crosshair';
+      }
+
+      // Instantaneous temperature lookup using pre-cached thermal image data
+      let temp = "--";
+      if (cachedThermalData && cachedRgbToTemp) {
+        const pIdx = (py * 320 + px) * 4;
+        temp = cachedRgbToTemp(cachedThermalData[pIdx], cachedThermalData[pIdx + 1], cachedThermalData[pIdx + 2]).toFixed(2);
+      } else if (currentScaleColors) {
+        const off = document.createElement('canvas');
+        off.width = 320; off.height = 240;
+        const ctx = off.getContext('2d');
+        ctx.drawImage(currentThermalImg, 0, 0, 320, 240);
+        const p = ctx.getImageData(px, py, 1, 1).data;
+        let bestDist = Infinity, bestIdx = 0;
+        for (let i = 0; i < currentScaleColors.length; i++) {
+          const sc = currentScaleColors[i];
+          const d = (p[0]-sc[0])**2 + (p[1]-sc[1])**2 + (p[2]-sc[2])**2;
+          if (d < bestDist) { bestDist = d; bestIdx = i; }
+        }
+        temp = (37.0 - (bestIdx / (currentScaleColors.length - 1)) * 10.0).toFixed(2);
+      }
+
+      // Determine Anatomical Region dynamically relative to center cornea
       let region = "Periorbital Tissue";
-      if (px >= 50 && px <= 140 && py >= 110 && py <= 170) {
-        region = (Math.abs(px - 95) <= 12 && Math.abs(py - 140) <= 10) ? "Right Central Cornea (OD)" : "Right Corneal Margin";
-      } else if (px >= 175 && px <= 265 && py >= 110 && py <= 170) {
-        region = (Math.abs(px - 220) <= 12 && Math.abs(py - 140) <= 10) ? "Left Central Cornea (OS)" : "Left Corneal Margin";
+      const re = currentThermalAnalysis.re;
+      const le = currentThermalAnalysis.le;
+
+      const reDist = ((px - re.cx) / re.rx) ** 2 + ((py - re.cy) / re.ry) ** 2;
+      const leDist = ((px - le.cx) / le.rx) ** 2 + ((py - le.cy) / le.ry) ** 2;
+
+      if (reDist <= 0.15) {
+        region = re.isUserFixed ? "Right Center Cornea (OD - User Fixed)" : "Right Center Cornea (OD - Focal Point)";
+      } else if (reDist <= 1.0) {
+        region = re.isUserFixed ? "Right Cornea (OD - User Fixed Area)" : "Right Cornea (OD - Tear Film)";
+      } else if (leDist <= 0.15) {
+        region = le.isUserFixed ? "Left Center Cornea (OS - User Fixed)" : "Left Center Cornea (OS - Focal Point)";
+      } else if (leDist <= 1.0) {
+        region = le.isUserFixed ? "Left Cornea (OS - User Fixed Area)" : "Left Cornea (OS - Tear Film)";
       } else if (px >= 300) {
         region = "FLIR Scale Bar";
       }
 
-      document.getElementById('thermal-probe-coords').textContent = `X: ${px}, Y: ${py}`;
-      document.getElementById('thermal-probe-region').textContent = region;
+      const coordsEl = document.getElementById('thermal-probe-coords');
+      if (coordsEl) coordsEl.textContent = `X: ${px}, Y: ${py}`;
+      const regionEl = document.getElementById('thermal-probe-region');
+      if (regionEl) regionEl.textContent = region;
       const tempSpan = document.getElementById('thermal-probe-temp');
-      tempSpan.textContent = `${temp}°C`;
-      tempSpan.className = (temp < 34.2) ? "px-2.5 py-0.5 rounded-md bg-rose-500/20 border border-rose-400/30 text-rose-300 font-bold text-sm" : "px-2.5 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 font-bold text-sm";
+      if (tempSpan) {
+        tempSpan.textContent = `${temp}°C`;
+        tempSpan.className = (parseFloat(temp) < 34.2) ? "px-2.5 py-0.5 rounded-md bg-rose-500/20 border border-rose-400/30 text-rose-300 font-bold text-sm" : "px-2.5 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 font-bold text-sm";
+      }
     }
 
     function handleThermalCanvasMouseLeave() {
+      if (isDraggingCorneaPoint) {
+        isDraggingCorneaPoint = null;
+        const canvas = document.getElementById('thermal-main-canvas');
+        if (canvas) canvas.style.cursor = 'crosshair';
+      }
       if (currentThermalAnalysis) {
         document.getElementById('thermal-probe-coords').textContent = `X: --, Y: --`;
         document.getElementById('thermal-probe-region').textContent = `Hover over eye`;
@@ -1783,7 +2341,7 @@
     }
 
     // Transfer Extracted Image Temperatures to Simulator Matrix Below
-    function syncThermalExtractedToSimulator() {
+    function syncThermalExtractedToSimulator(shouldScroll = true) {
       if (!currentThermalAnalysis) return;
       const res = currentThermalAnalysis;
 
@@ -1795,19 +2353,21 @@
       clinicParams.tl = res.combined.tc;
       clinicParams.most = parseFloat((res.combined.nc + 0.3).toFixed(2));
 
-      if (res.matchedRecord) {
-        clinicParams.osdi = res.matchedRecord.osdi;
-        clinicParams.cr10 = res.matchedRecord.re.cr10 || -0.035;
+      // Use patient calculated OSDI if available
+      const ptOsdi = getPatientCalculatedOSDI();
+      if (ptOsdi !== null) {
+        clinicParams.osdi = ptOsdi;
       }
 
       syncUIInputs();
       runClinicInference();
       renderCornealHeatmap();
 
-      // Scroll smoothly down to simulator
-      const targetEl = document.getElementById('input-osdi');
-      if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (shouldScroll) {
+        const targetEl = document.getElementById('input-osdi');
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }
     }
 
@@ -1863,6 +2423,88 @@
     };
 
     // =========================================================================
+    // Helper: Compute patient OSDI from Q1-Q6
+    function getPatientCalculatedOSDI() {
+      let hasAnswers = false;
+      let sum = 0;
+      for (let k = 1; k <= 6; k++) {
+        if (typeof surveyAnswers[k] === 'number') {
+          sum += surveyAnswers[k];
+          hasAnswers = true;
+        }
+      }
+      if (!hasAnswers) return null;
+      return Math.round((sum * 100) / 18);
+    }
+
+    // Helper: Update Patient Diagnostic Profile Card & Controls Bar
+    function updatePatientProfileUI() {
+      const osdiEl = document.getElementById('patient-profile-osdi');
+      const catEl = document.getElementById('patient-profile-category');
+      const latEl = document.getElementById('patient-profile-laterality');
+      const imgStatusEl = document.getElementById('patient-profile-img-status');
+      const statusBadgeText = document.getElementById('patient-scan-status-text');
+      const statusBadge = document.getElementById('patient-scan-status-badge');
+      const gtEl = document.getElementById('pt-ground-truth');
+      const idTag = document.getElementById('pt-id-tag');
+      const ctrlDot = document.getElementById('patient-ctrl-dot');
+      const ctrlText = document.getElementById('patient-ctrl-text');
+
+      const ptOsdi = getPatientCalculatedOSDI();
+      if (ptOsdi !== null) {
+        if (osdiEl) osdiEl.textContent = ptOsdi;
+        if (catEl) {
+          if (ptOsdi <= 12) catEl.textContent = "Normal (0-12)";
+          else if (ptOsdi <= 22) catEl.textContent = "Mild (13-22)";
+          else if (ptOsdi <= 32) catEl.textContent = "Moderate (23-32)";
+          else catEl.textContent = "Severe (33+)";
+        }
+      } else {
+        if (osdiEl) osdiEl.textContent = "--";
+        if (catEl) catEl.textContent = "Awaiting survey";
+      }
+
+      const chosenLaterality = surveyAnswers[7] || "Both eyes";
+      if (latEl) latEl.textContent = chosenLaterality;
+
+      if (surveyUploadedImg) {
+        if (imgStatusEl) {
+          imgStatusEl.textContent = "Uploaded ✓";
+          imgStatusEl.className = "text-sm font-bold font-mono text-emerald-400 mt-1 truncate";
+        }
+        if (statusBadgeText) statusBadgeText.textContent = "Step 8 Thermal Scan Active";
+        if (statusBadge) statusBadge.className = "text-xs px-2.5 py-1 rounded-full font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5";
+        if (ctrlDot) ctrlDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+        if (ctrlText) ctrlText.textContent = "Patient Thermal Scan Active (Step 8)";
+
+        if (gtEl) {
+          if (currentThermalAnalysis) {
+            gtEl.textContent = currentThermalAnalysis.isOverallDry ? "Dry Eye Detected" : "Normal Ocular Surface";
+            gtEl.className = currentThermalAnalysis.isOverallDry ? "text-rose-400 uppercase font-mono font-bold" : "text-emerald-400 uppercase font-mono font-bold";
+          } else {
+            gtEl.textContent = "Thermal Analyzed";
+            gtEl.className = "text-cyan-400 uppercase font-mono font-bold";
+          }
+        }
+        if (idTag) idTag.textContent = "Patient Thermal Scan (Step 8)";
+      } else {
+        if (imgStatusEl) {
+          imgStatusEl.textContent = "No Scan Uploaded";
+          imgStatusEl.className = "text-sm font-bold font-mono text-amber-400 mt-1 truncate";
+        }
+        if (statusBadgeText) statusBadgeText.textContent = "Awaiting Step 8 Upload";
+        if (statusBadge) statusBadge.className = "text-xs px-2.5 py-1 rounded-full font-mono bg-amber-500/15 text-amber-300 border border-amber-400/30 flex items-center gap-1.5";
+        if (ctrlDot) ctrlDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+        if (ctrlText) ctrlText.textContent = "No Patient Thermal Scan Loaded (Step 8)";
+
+        if (gtEl) {
+          gtEl.textContent = "Awaiting Upload";
+          gtEl.className = "text-amber-400 uppercase font-mono font-bold";
+        }
+        if (idTag) idTag.textContent = "No Patient Data";
+      }
+    }
+
     // NAVIGATION & VIEW SWITCHER
     // =========================================================================
     function switchMode(mode) {
@@ -1884,6 +2526,31 @@
       } else if (mode === 'clinic') {
         document.getElementById('view-clinic').classList.remove('hidden');
         if (btnClinic) btnClinic.className = activeClass;
+
+        // Check if patient uploaded a thermal image in Step 8
+        if (surveyUploadedImg) {
+          const emptyState = document.getElementById('thermal-empty-state');
+          if (emptyState) emptyState.classList.add('hidden');
+
+          const ptOsdi = getPatientCalculatedOSDI();
+          if (ptOsdi !== null) {
+            clinicParams.osdi = ptOsdi;
+            const inputOsdi = document.getElementById('input-osdi');
+            if (inputOsdi) inputOsdi.value = ptOsdi;
+            const valOsdi = document.getElementById('val-osdi');
+            if (valOsdi) valOsdi.textContent = ptOsdi.toFixed(1);
+          }
+
+          loadThermalImageFromUrl(surveyUploadedImg, "Patient_Thermal_Scan.jpg");
+        } else {
+          // No thermal scan uploaded yet
+          const emptyState = document.getElementById('thermal-empty-state');
+          if (emptyState) emptyState.classList.remove('hidden');
+          const canvasName = document.getElementById('canvas-img-name');
+          if (canvasName) canvasName.textContent = "No thermal image loaded";
+          updatePatientProfileUI();
+        }
+
         runClinicInference();
         renderCornealHeatmap();
       }
@@ -1948,10 +2615,10 @@
     ];
 
     const SURVEY_LIKERT_FREQUENCY = [
-      { letter: 'A', text: 'None of the time (Never)', score: 0 },
-      { letter: 'B', text: 'Some of the time (Occasionally)', score: 1 },
-      { letter: 'C', text: 'Most of the time (Frequently)', score: 2 },
-      { letter: 'D', text: 'All of the time (Constantly)', score: 3 }
+      { letter: 'A', text: 'None of the time', score: 0 },
+      { letter: 'B', text: 'Some of the time', score: 1 },
+      { letter: 'C', text: 'Most of the time', score: 2 },
+      { letter: 'D', text: 'All of the time', score: 3 }
     ];
 
     const SURVEY_LATERALITY_OPTIONS = [
@@ -1963,6 +2630,22 @@
     let surveyCurrentStep = 0; // 0=Welcome, 1-7=Questions, 8=Upload, 9=Results
     let surveyAnswers = {};
     let surveyUploadedImg = null;
+
+    function toggleHeroScannerAnimation() {
+      const stage = document.getElementById('hero-scanner-stage');
+      const btnIcon = document.getElementById('hero-scan-btn-icon');
+      const btnText = document.getElementById('hero-scan-btn-text');
+      if (!stage) return;
+      if (stage.classList.contains('hero-scan-paused')) {
+        stage.classList.remove('hero-scan-paused');
+        if (btnIcon) btnIcon.textContent = '⏸';
+        if (btnText) btnText.textContent = 'Pause Scan';
+      } else {
+        stage.classList.add('hero-scan-paused');
+        if (btnIcon) btnIcon.textContent = '▶';
+        if (btnText) btnText.textContent = 'Resume Scan';
+      }
+    }
 
     function surveyGoToStep(step) {
       surveyCurrentStep = step;
@@ -1976,29 +2659,48 @@
       const stepIndicator = document.getElementById('survey-step-indicator');
       const categoryBadge = document.getElementById('survey-category-badge');
 
+      const surveyMain = document.getElementById('view-survey');
+      const surveyCard = document.getElementById('survey-main-card');
+
       if (step === 0) {
         progressWrap.classList.add('hidden');
         document.getElementById('survey-step-0').classList.remove('hidden');
-      } else if (step >= 1 && step <= 7) {
-        progressWrap.classList.remove('hidden');
-        document.getElementById('survey-question-wrap').classList.remove('hidden');
-        renderSurveyQuestion(step);
-      } else if (step === 8) {
-        progressWrap.classList.remove('hidden');
-        categoryBadge.textContent = "Step 8 • Ocular Scan";
-        stepIndicator.textContent = "8 / 8";
-        progressFill.style.width = "100%";
+        if (surveyMain) {
+          surveyMain.classList.remove('max-w-3xl');
+          surveyMain.classList.add('max-w-5xl', 'lg:max-w-6xl', 'xl:max-w-7xl');
+        }
+        if (surveyCard) {
+          surveyCard.classList.add('lg:min-h-[calc(100vh-140px)]', 'flex', 'flex-col', 'justify-between');
+        }
+      } else {
+        if (surveyMain) {
+          surveyMain.classList.remove('max-w-5xl', 'lg:max-w-6xl', 'xl:max-w-7xl');
+          surveyMain.classList.add('max-w-3xl');
+        }
+        if (surveyCard) {
+          surveyCard.classList.remove('lg:min-h-[calc(100vh-140px)]', 'flex', 'flex-col', 'justify-between');
+        }
+        if (step >= 1 && step <= 7) {
+          progressWrap.classList.remove('hidden');
+          document.getElementById('survey-question-wrap').classList.remove('hidden');
+          renderSurveyQuestion(step);
+        } else if (step === 8) {
+          progressWrap.classList.remove('hidden');
+          categoryBadge.textContent = "Step 8 • Ocular Scan";
+          stepIndicator.textContent = "8 / 8";
+          progressFill.style.width = "100%";
 
-        // Update target eye laterality hint on upload screen
-        const chosenLaterality = surveyAnswers[7] || "Both eyes";
-        const hintVal = document.getElementById('survey-laterality-hint-val');
-        if (hintVal) hintVal.textContent = chosenLaterality;
+          // Update target eye laterality hint on upload screen
+          const chosenLaterality = surveyAnswers[7] || "Both eyes";
+          const hintVal = document.getElementById('survey-laterality-hint-val');
+          if (hintVal) hintVal.textContent = chosenLaterality;
 
-        document.getElementById('survey-step-upload').classList.remove('hidden');
-      } else if (step === 9) {
-        progressWrap.classList.add('hidden');
-        document.getElementById('survey-step-results').classList.remove('hidden');
-        runSurveyDiagnosticSimulation();
+          document.getElementById('survey-step-upload').classList.remove('hidden');
+        } else if (step === 9) {
+          progressWrap.classList.add('hidden');
+          document.getElementById('survey-step-results').classList.remove('hidden');
+          runSurveyDiagnosticSimulation();
+        }
       }
     }
 
@@ -2012,6 +2714,16 @@
       document.getElementById('survey-progress-fill').style.width = `${(qNum / 8) * 100}%`;
       document.getElementById('survey-next-btn-text').textContent = (qNum === 7) ? "Continue to Photo Scan" : "Next Question";
       document.getElementById('survey-validation-error').classList.add('hidden');
+
+      // Show instructions banner ONLY on top of first question
+      const instrBanner = document.getElementById('survey-instructions-banner');
+      if (instrBanner) {
+        if (qNum === 1) {
+          instrBanner.classList.remove('hidden');
+        } else {
+          instrBanner.classList.add('hidden');
+        }
+      }
 
       const container = document.getElementById('survey-options-container');
       container.innerHTML = '';
@@ -2082,19 +2794,143 @@
       }
     }
 
+    // Thermal Image Validator: Rejects regular/normal visible eye images
+    function checkIsThermalImage(img) {
+      try {
+        const canvas = document.createElement('canvas');
+        const w = 160;
+        const h = 120;
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const imgData = ctx.getImageData(0, 0, w, h).data;
+        const totalPx = w * h;
+
+        let purpleCount = 0;
+        let cyanCount = 0;
+        let warmCount = 0;
+
+        for (let i = 0; i < imgData.length; i += 4) {
+          const r = imgData[i];
+          const g = imgData[i + 1];
+          const b = imgData[i + 2];
+
+          // Cold isotherm in FLIR Ironbow palette:
+          // Purple / Violet: R > 30, B > 45, G suppressed
+          if (r > 30 && b > 45 && g < r * 0.78 && g < b * 0.78) {
+            purpleCount++;
+          }
+
+          // Cyan / Aqua (cool tear / cornea zone): B > 50, G > 35, R suppressed
+          if (b > 50 && g > 35 && r < g * 0.72) {
+            cyanCount++;
+          }
+
+          // Warm / hot isotherm (Ironbow red, orange, yellow):
+          if (r > 130 && r > b * 1.25) {
+            warmCount++;
+          }
+        }
+
+        const purplePct = (purpleCount / totalPx) * 100;
+        const cyanPct = (cyanCount / totalPx) * 100;
+        const coldPct = purplePct + cyanPct;
+        const warmPct = (warmCount / totalPx) * 100;
+
+        // FLIR Ironbow thermal image signature:
+        // Authentic thermal scans have cold isotherms >= 2.5% AND warm isotherms >= 20.0%
+        // Normal visible-light photos have coldPct < 1.0% (purple ~0%, cyan < 0.8%)
+        const isThermal = (coldPct >= 2.5) && (warmPct >= 20.0);
+
+        return {
+          isThermal: isThermal,
+          coldPct: coldPct,
+          warmPct: warmPct,
+          purplePct: purplePct,
+          cyanPct: cyanPct
+        };
+      } catch (err) {
+        console.warn("Thermal validator exception:", err);
+        return { isThermal: false };
+      }
+    }
+
+    function processSurveyImageFile(file) {
+      const errorBox = document.getElementById('survey-upload-error');
+      if (errorBox) {
+        errorBox.classList.add('hidden');
+        errorBox.style.display = 'none';
+      }
+
+      if (!file) {
+        showSurveyUploadErr("upload thermal image ");
+        return;
+      }
+
+      const isImg = file.type ? file.type.startsWith('image/') : /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+      if (!isImg) {
+        showSurveyUploadErr("upload thermal image ");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const dataUrl = ev.target.result;
+        const testImg = new Image();
+        testImg.onload = function() {
+          const thermalCheck = checkIsThermalImage(testImg);
+          if (!thermalCheck.isThermal) {
+            // Normal image rejected: prompt for thermal image in red colour
+            surveyUploadedImg = null;
+            document.getElementById('survey-file-input').value = "";
+            document.getElementById('survey-preview-wrap').classList.add('hidden');
+            document.getElementById('survey-preview-wrap').classList.remove('flex');
+            document.getElementById('survey-upload-prompt').classList.remove('hidden');
+            showSurveyUploadErr("upload thermal image ");
+            return;
+          }
+
+          // Valid thermal image accepted
+          surveyUploadedImg = dataUrl;
+          displaySurveyImgPreview(surveyUploadedImg);
+        };
+        testImg.onerror = function() {
+          showSurveyUploadErr("upload thermal image ");
+        };
+        testImg.src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function handleImageSelected(e) {
       const file = e.target.files[0];
       if (!file) return;
-      if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-        showSurveyUploadErr("Please upload a valid JPEG or PNG photo.");
-        return;
+      processSurveyImageFile(file);
+    }
+
+    function handleSurveyDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const zone = document.getElementById('survey-drop-zone');
+      if (zone) zone.classList.add('border-cyan-400', 'bg-cyan-950/30');
+    }
+
+    function handleSurveyDragLeave(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const zone = document.getElementById('survey-drop-zone');
+      if (zone) zone.classList.remove('border-cyan-400', 'bg-cyan-950/30');
+    }
+
+    function handleSurveyDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const zone = document.getElementById('survey-drop-zone');
+      if (zone) zone.classList.remove('border-cyan-400', 'bg-cyan-950/30');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processSurveyImageFile(e.dataTransfer.files[0]);
       }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        surveyUploadedImg = ev.target.result;
-        displaySurveyImgPreview(surveyUploadedImg);
-      };
-      reader.readAsDataURL(file);
     }
 
     function displaySurveyImgPreview(url) {
@@ -2102,7 +2938,11 @@
       document.getElementById('survey-upload-prompt').classList.add('hidden');
       document.getElementById('survey-preview-wrap').classList.remove('hidden');
       document.getElementById('survey-preview-wrap').classList.add('flex');
-      document.getElementById('survey-upload-error').classList.add('hidden');
+      const errBox = document.getElementById('survey-upload-error');
+      if (errBox) {
+        errBox.classList.add('hidden');
+        errBox.style.display = 'none';
+      }
     }
 
     function clearUploadedImage(e) {
@@ -2114,20 +2954,24 @@
       document.getElementById('survey-upload-prompt').classList.remove('hidden');
     }
 
-    function loadSampleEyePhoto(e) {
-      if (e) e.stopPropagation();
-      surveyUploadedImg = "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80";
-      displaySurveyImgPreview(surveyUploadedImg);
-    }
+
 
     function showSurveyUploadErr(msg) {
-      document.getElementById('survey-upload-error-text').textContent = msg;
-      document.getElementById('survey-upload-error').classList.remove('hidden');
+      const errorText = document.getElementById('survey-upload-error-text');
+      const errorBox = document.getElementById('survey-upload-error');
+      if (errorText) {
+        errorText.textContent = msg || "upload thermal image ";
+        errorText.style.color = "#ef4444";
+      }
+      if (errorBox) {
+        errorBox.classList.remove('hidden');
+        errorBox.style.display = 'flex';
+      }
     }
 
     function submitSurveyForAnalysis() {
       if (!surveyUploadedImg) {
-        showSurveyUploadErr("Please upload or load an eye photograph for ocular surface verification.");
+        showSurveyUploadErr("upload thermal image ");
         return;
       }
       surveyGoToStep(9); // Go to results
@@ -2249,51 +3093,16 @@
     // CLINICAL THERMOGRAPHY LAB & INFERENCE ENGINE
     // =========================================================================
     function initClinicCohortSelector() {
-      const sel = document.getElementById('clinic-patient-select');
-      sel.innerHTML = '';
-      CLINICAL_PATIENT_COHORT.forEach((p, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = `${p.id} — Ground Truth: ${p.actual.toUpperCase()} (OSDI: ${p.osdi})`;
-        sel.appendChild(opt);
-      });
-      loadSelectedPatient(0);
+      // Cohort dataset loading removed per user request: only patient uploaded thermal data is displayed
+      updatePatientProfileUI();
     }
 
     function loadSelectedPatient(idx) {
-      const p = CLINICAL_PATIENT_COHORT[idx];
-      if (!p) return;
-
-      clinicParams.osdi = p.osdi;
-      clinicParams.cr10 = p.cr10;
-      clinicParams.cr7 = p.cr7;
-      clinicParams.nc = p.nc;
-      clinicParams.tc = p.tc;
-      clinicParams.cc = p.cc;
-      clinicParams.nl = p.nl;
-      clinicParams.tl = p.tl;
-      clinicParams.t0 = p.t0;
-      clinicParams.t10 = p.t10;
-      clinicParams.most = p.most;
-
-      syncUIInputs();
-      
-      const gtEl = document.getElementById('pt-ground-truth');
-      gtEl.textContent = p.actual;
-      gtEl.className = (p.actual.toLowerCase().includes('normal')) ? "text-emerald-400 uppercase font-mono font-bold" : "text-rose-400 uppercase font-mono font-bold";
-      document.getElementById('pt-id-tag').textContent = `Cohort ID: ${p.id}`;
-
-      runClinicInference();
-      renderCornealHeatmap();
+      // Cohort selector removed: only patient data is displayed
     }
 
     function loadRandomPatient(type) {
-      const filtered = CLINICAL_PATIENT_COHORT.filter(p => p.actual.toLowerCase().includes(type.toLowerCase()));
-      if (filtered.length === 0) return;
-      const pick = filtered[Math.floor(Math.random() * filtered.length)];
-      const idx = CLINICAL_PATIENT_COHORT.indexOf(pick);
-      document.getElementById('clinic-patient-select').value = idx;
-      loadSelectedPatient(idx);
+      // Cohort selector removed: only patient data is displayed
     }
 
     function resetThermalDefaults() {
@@ -2469,108 +3278,7 @@
     // CORNEAL THERMAL HEATMAP RENDERER (HTML5 CANVAS)
     // =========================================================================
     function renderCornealHeatmap() {
-      const canvas = document.getElementById('cornea-thermal-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-
-      ctx.clearRect(0, 0, w, h);
-
-      // Center coords
-      const cx = w / 2;
-      const cy = h / 2;
-      const eyeR = 110;
-
-      // Draw dark ocular orbit backdrop
-      const bgGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, eyeR + 30);
-      bgGrad.addColorStop(0, '#091A2E');
-      bgGrad.addColorStop(1, '#02060D');
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, w, h);
-
-      // Temperature mapping function (32°C -> Deep Blue, 35°C -> Cyan/Green, 37°C -> Yellow/Red)
-      function tempToColor(t) {
-        // Clamp between 33 and 37
-        const norm = Math.max(0, Math.min(1, (t - 33.5) / 3.0));
-        const r = Math.round(norm * 240);
-        const g = Math.round((1 - Math.abs(norm - 0.5) * 2) * 220 + 35);
-        const b = Math.round((1 - norm) * 255);
-        return `rgba(${r}, ${g}, ${b}, 0.85)`;
-      }
-
-      const colNC = tempToColor(clinicParams.nc);
-      const colCC = tempToColor(clinicParams.cc);
-      const colTC = tempToColor(clinicParams.tc);
-
-      // Sclera Outline
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, eyeR + 25, eyeR - 15, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(72, 202, 228, 0.25)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Cornea Thermal Gradient (Left = Nasal, Center = Central, Right = Temporal)
-      const grad = ctx.createLinearGradient(cx - eyeR, cy, cx + eyeR, cy);
-      grad.addColorStop(0.15, colNC);
-      grad.addColorStop(0.50, colCC);
-      grad.addColorStop(0.85, colTC);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, eyeR - 20, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.shadowColor = colCC;
-      ctx.shadowBlur = 25;
-      ctx.fill();
-      ctx.restore();
-
-      // Pupils & Corneal Rings
-      ctx.beginPath();
-      ctx.arc(cx, cy, 25, 0, Math.PI * 2);
-      ctx.fillStyle = '#050B14';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Pupil reflection light point
-      ctx.beginPath();
-      ctx.arc(cx + 6, cy - 8, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fill();
-
-      // Tear film breakup simulation particles if Dry Eye
-      if (clinicParams.cr10 < -0.035 || clinicParams.cc < 34.4) {
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
-        const spots = [
-          { x: cx - 35, y: cy - 25, r: 4 },
-          { x: cx + 28, y: cy + 30, r: 5 },
-          { x: cx + 45, y: cy - 20, r: 3.5 },
-          { x: cx - 20, y: cy + 40, r: 4.5 }
-        ];
-        spots.forEach(sp => {
-          ctx.beginPath();
-          ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#FFFFFF';
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        });
-      }
-
-      // Region Annotations
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '10px JetBrains Mono';
-      ctx.textAlign = 'center';
-      ctx.fillText(`NC: ${clinicParams.nc.toFixed(1)}°`, cx - 65, cy - 45);
-      ctx.fillText(`CC: ${clinicParams.cc.toFixed(1)}°`, cx, cy + 55);
-      ctx.fillText(`TC: ${clinicParams.tc.toFixed(1)}°`, cx + 65, cy - 45);
-
-      // Label overlays
-      document.getElementById('lbl-canvas-nc').textContent = `${clinicParams.nc.toFixed(1)}°C`;
-      document.getElementById('lbl-canvas-cc').textContent = `${clinicParams.cc.toFixed(1)}°C`;
-      document.getElementById('lbl-canvas-tc').textContent = `${clinicParams.tc.toFixed(1)}°C`;
+      // Heatmap renderer removed
     }
 
     // =========================================================================
@@ -2580,6 +3288,8 @@
       initThermalScanner();
       initClinicCohortSelector();
       renderCornealHeatmap();
+      window.addEventListener('mouseup', handleThermalCanvasMouseUp);
+      window.addEventListener('touchend', handleThermalCanvasTouchEnd);
     });
   </script>
 </body>

@@ -46,3 +46,6 @@ $RECYCLE.BIN/
 .vscode/
 *.swp
 *.swo
+
+# Scratch & Temporary Testing Files
+scratch/
