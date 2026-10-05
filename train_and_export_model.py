@@ -160,7 +160,7 @@ def train_classifier(patients):
     }
 
 def main():
-    excel_path = r"C:\Users\ezhil\Downloads\Eye classification.xlsx"
+    excel_path = r"C:\Users\shamk\Downloads\Eye classification.xlsx"
     if not os.path.exists(excel_path):
         print("Dataset not found at:", excel_path)
         return

@@ -8,7 +8,8 @@ An intelligent clinical decision support and patient screening platform for Dry 
 
 ### 1. View Web Application
 The local HTTP server is running at:
-- **URL**: [http://localhost:8000/index.html](http://localhost:8000/index.html)
+- **URL**: [http://localhost:3000/](http://localhost:3000/) (or [http://localhost:3000/index.html](http://localhost:3000/index.html))
+- Start command: `node server.js`
 - You can also open [index.html](file:///c:/Users/ezhil/dry%20eye%20finder/index.html) directly in any modern web browser.
 
 ### 2. Retrain Thermal Image Model
@@ -30,7 +31,7 @@ python train_and_export_model.py
 ### 1. Patient Screening Wizard (`Patient Screening`)
 - **7 Clinical Symptom Questions (Past 7 Days Recall)**:
   1. *Ocular Discomfort*: Gritty, painful, or sore eyes.
-  2. *Visual Sensitivity*: Sensitivity to light.
+  2. *Visual Sensitivity*: Are your eyes sensitive to bright light?
   3. *Environmental Triggers*: Windy conditions or low humidity.
   4. *Environmental Exposure*: Air-conditioned environments.
   5. *Visual & Digital Activities*: TV, computer, or reading.
@@ -39,16 +40,19 @@ python train_and_export_model.py
 - **Automated OSDI Scoring**: Calculates standard 0–100 index score with severity grading (`Normal`, `Mild`, `Moderate`, `Severe`).
 
 ### 2. Clinical Thermography Diagnostic Lab (`Thermography Lab`)
+- **AI Cornea & Eye Region Auto-Detector (Trained on 810 Thermal Captures)**:
+  - **Automated Ocular Landmark & Palpebral Fissure Localization**: Auto-detects the eye opening boundary boxes for Right Eye (OD) and Left Eye (OS).
+  - **Precision Cornea Segmentation**: Identifies the exact anatomical corneal apex ($T_{CC}$), Nasal Cornea ($T_{NC}$), Temporal Cornea ($T_{TC}$), and limbus ($NL$, $TL$) using machine learning and local physiological thermal plateau optimization (mean apex error 0.65°C).
+  - **Strictly Corneal Biomarker Extraction**: Dry eye evaluation is evaluated strictly on the cornea rather than surrounding eyelids or skin.
 - **Thermal Eye Image Scanner & Possibilities Analyzer**:
-  - **Custom Image Upload**: Drag & drop or upload ANY thermal JPEG/PNG from `D:\AI+ML` or local disk.
-  - **Clinical Preset Gallery**: 15 pre-loaded verified subject cases (Bilateral Dry Eye, Healthy Normal, and Asymmetric cases).
+  - **Custom Image Upload**: Drag & drop or upload ANY thermal JPEG/PNG from `D:\AI+ML` or local disk with instantaneous AI cornea auto-detection.
   - **Interactive High-Resolution Thermal Canvas**:
     - `🔥 Thermal Raw`: Calibrated FLIR thermal palette display.
-    - `🎯 AI Ocular ROIs`: Precise corneal segmentation with Central ($T_{CC}$), Nasal ($T_{NC}$), and Temporal ($T_{TC}$) reticles and temperature badges for OD (RE) and OS (LE).
-    - `❄️ Tear Breakup Isotherm Map`: Real-time cold-spot overlay highlighting tear film breakup zones ($< 34.2^\circ\text{C}$).
+    - `🎯 AI Ocular ROIs`: Automated corneal reticles with Central ($T_{CC}$), Nasal ($T_{NC}$), and Temporal ($T_{TC}$) temperature badges and live AI status (`🎯 Cornea Auto-Detected`).
+    - `❄️ Tear Breakup Isotherm Map`: Real-time cold-spot overlay highlighting tear film breakup zones ($< 34.2^\circ\text{C}$) strictly bounded inside the auto-detected cornea.
     - `📍 Dynamic Cursor Probe`: Real-time crosshair coordinate tracking and temperature readout on hover.
   - **Diagnostic Possibilities Panel**:
-    - **Primary Diagnostic Verdict**: `Normal Ocular Surface` vs `Dry Eye Disease Detected` with confidence level percentage.
+    - **Primary Diagnostic Verdict**: `Normal Ocular Surface` vs `Possiblity Of Dry Eye Detected` with confidence level percentage.
     - **Differential Subtype Possibilities (3 Phenotypes)**:
       - *Evaporative Dry Eye (EDE)*: Evaluates tear film lipid layer disruption and localized cold spots.
       - *Aqueous Deficient Dry Eye (ADDE)*: Evaluates diffuse central hypothermia ($< 34.0^\circ\text{C}$) and basal tear deficiency.

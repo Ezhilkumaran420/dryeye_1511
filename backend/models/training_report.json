@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-09-30 20:11:55",
+  "architecture": {
+    "description": "Learned Stacking Fusion (CNN + XGBoost + Thermal Sign)",
+    "image_backbone": "ResNet-18-SE-MultiModal-ThermalEyeCNN",
+    "tabular_model": "XGBoost-16features-BinaryLogistic",
+    "fusion": "Learned Logistic Stacking",
+    "loss_function": "FocalLoss(alpha=0.35, gamma=2.0)",
+    "lr_scheduler": "CosineAnnealingWarmRestarts",
+    "augmentation": "Mixup + Rotation + Flip + Zoom + ColorJitter"
+  },
+  "stacking_weights": [
+    11.504970662070276,
+    9.323929357321099,
+    -10.4695714155683
+  ],
+  "stacking_bias": -4.342147119118624,
+  "optimal_threshold": 0.7,
+  "test_metrics": {
+    "hybrid": {
+      "accuracy": 0.7019230769230769,
+      "precision": 0.6136363636363636,
+      "recall": 0.6585365853658537,
+      "specificity": 0.7301587301587301,
+      "f1_score": 0.6352941176470588,
+      "auc_roc": 0.746031746031746,
+      "threshold": 0.7,
+      "confusion_matrix": {
+        "tp": 27,
+        "tn": 46,
+        "fp": 17,
+        "fn": 14,
+        "total": 104
+      }
+    },
+    "thermal_image": {
+      "accuracy": 0.7115384615384616,
+      "precision": 1.0,
+      "recall": 0.2682926829268293,
+      "specificity": 1.0,
+      "f1_score": 0.4230769230769231,
+      "auc_roc": 0.6991869918699186,
+      "threshold": 0.7,
+      "confusion_matrix": {
+        "tp": 11,
+        "tn": 63,
+        "fp": 0,
+        "fn": 30,
+        "total": 104
+      }
+    },
+    "osdi_tabular": {
+      "accuracy": 0.7884615384615384,
+      "precision": 1.0,
+      "recall": 0.4634146341463415,
+      "specificity": 1.0,
+      "f1_score": 0.6333333333333334,
+      "auc_roc": 0.9272164150212931,
+      "threshold": 0.7,
+      "confusion_matrix": {
+        "tp": 19,
+        "tn": 63,
+        "fp": 0,
+        "fn": 22,
+        "total": 104
+      }
+    }
+  },
+  "temperature_validation_rules": {
+    "normal_range_celsius": "34.0 - 36.5",
+    "max_bilateral_asymmetry_celsius": 0.5,
+    "cold_spot_ratio_threshold": 0.12
+  }
+}
