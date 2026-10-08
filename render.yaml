@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: dryeyefinder
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install --no-cache-dir -r requirements.txt"
+    startCommand: "python backend/run_server.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9

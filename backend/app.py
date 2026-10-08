@@ -334,3 +334,15 @@ async def predict(
         }
     }
     return response
+
+
+@app.get("/{file_path:path}")
+def serve_static_root(file_path: str):
+    """
+    Serves static root files (e.g. images, js, json) requested by the frontend.
+    """
+    safe_path = os.path.normpath(file_path).lstrip(os.sep).lstrip("/")
+    if safe_path and os.path.isfile(safe_path):
+        return FileResponse(safe_path)
+    raise HTTPException(status_code=404, detail="File not found")
+
