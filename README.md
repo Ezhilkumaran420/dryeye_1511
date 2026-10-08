@@ -1,5 +1,7 @@
 # Dry Eye AI — Clinical Detection & Thermography System
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Ezhilkumaran420/dryeyefinder)
+
 An intelligent clinical decision support and patient screening platform for Dry Eye Disease (DED), combining validated **7-day symptom questionnaire (with Laterality)**, **anterior segment FLIR thermal imaging AI**, and a **multimodal machine learning classifier** trained on clinical ocular thermography data and thermal image sequences.
 
 ---
