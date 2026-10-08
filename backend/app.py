@@ -35,6 +35,12 @@ app.add_middleware(
 )
 
 from fastapi.responses import FileResponse
+import torch
+
+try:
+    torch.set_num_threads(1)
+except Exception:
+    pass
 
 # Global model instances
 extractor = ThermalFeatureExtractor()

@@ -4,7 +4,7 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: "pip install --no-cache-dir -r requirements.txt"
+    buildCommand: "bash build.sh"
     startCommand: "python backend/run_server.py"
     envVars:
       - key: PYTHON_VERSION
